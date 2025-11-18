@@ -2,9 +2,9 @@
 import CardTitle from '@/components/CardTitle.vue';
 import Card from '@/components/Card.vue';
 import Statistic from '@/components/Statistic.vue';
-import { NGrid, NGi } from 'naive-ui';
+import { NGrid, NGi, NInput, NIcon, NButton } from 'naive-ui';
 import {
-	Bookmark, Megaphone, Newspaper, Clipboard
+	Bookmark, Megaphone, Newspaper, Clipboard, Search, PaperPlane, Save, Link
 } from '@vicons/ionicons5';
 </script>
 
@@ -24,6 +24,29 @@ import {
 						<n-gi>
 							<Card title="公告" :icon="Megaphone">
 								This is a sample announcement text.
+							</Card>
+						</n-gi>
+						<n-gi>
+							<Card title="搜索" :icon="Search">
+								<n-input placeholder="搜索文章内容、作者 UID...">
+									<template #prefix>
+										<n-icon :component="Search" />
+									</template>
+									<template #suffix>
+										<n-button size="small" text style="font-size: 20px;">
+											<n-icon :component="PaperPlane" />
+										</n-button>
+									</template>
+								</n-input>
+							</Card>
+						</n-gi>
+						<n-gi>
+							<Card title="专栏 / 剪贴板 / 个人主页保存" :icon="Newspaper">
+								<n-input placeholder="输入专栏 / 剪贴板 / 个人主页链接">
+									<template #prefix>
+										<n-icon :component="Link" />
+									</template>
+								</n-input>
 							</Card>
 						</n-gi>
 					</n-grid>

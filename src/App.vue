@@ -171,6 +171,7 @@ import { renderIcon } from '@/utils/render';
 import ThemeEditor from '@/components/ThemeEditor.vue';
 
 import { uiThemeKey, type UiThemeVars } from '@/styles/themeKeys';
+import { defaultTheme } from "@/styles/defaultTheme.ts";
 
 const activeKey = ref('home');
 const collapsed = ref(true);
@@ -284,15 +285,7 @@ const THEME_STORAGE_KEY = 'luogu-saver-ui-theme';
 const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
 const parsedTheme = savedTheme ? JSON.parse(savedTheme) : null;
 
-const uiThemeVars = ref<UiThemeVars>(parsedTheme ? parsedTheme : {
-	bodyColor: '#f8fafc',
-	primaryColor: '#18a058',
-	primaryColorHover: '#36ad6a',
-	primaryColorPressed: '#0c7a43',
-	primaryColorSuppl: '#36ad6a',
-	cardColor: '#ffffff',
-	cardShadow: '2px 2px 4px #e4e4e4'
-});
+const uiThemeVars = ref<UiThemeVars>(parsedTheme ? parsedTheme : defaultTheme);
 
 provide(uiThemeKey, uiThemeVars);
 

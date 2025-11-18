@@ -1,29 +1,22 @@
 <script setup lang="ts">
-import {inject, ref} from 'vue'
-import {NButton, NColorPicker, NDrawer, NDrawerContent, NForm, NFormItem, NIcon, NInput, useMessage} from 'naive-ui'
-import {Settings as SettingsIcon} from '@vicons/ionicons5'
-import {uiThemeKey, type UiThemeVars} from '@/styles/themeKeys'
+import { inject, ref } from 'vue';
+import { NButton, NColorPicker, NDrawer, NDrawerContent, NForm, NFormItem, NIcon, NInput, useMessage } from 'naive-ui';
+import { Settings as SettingsIcon } from '@vicons/ionicons5';
+import { uiThemeKey, type UiThemeVars } from '@/styles/themeKeys';
+import { defaultTheme } from '@/styles/defaultTheme';
 
-const uiTheme = inject(uiThemeKey)
-const message = useMessage()
+const uiTheme = inject(uiThemeKey);
+const message = useMessage();
 
 if (!uiTheme) {
-	throw new Error('ThemeEditor 必须在 provider 内部使用')
+	throw new Error('ThemeEditor 必须在 provider 内部使用');
 }
 
-const showDrawer = ref(false)
+const showDrawer = ref(false);
 
 const handleReset = () => {
-	uiTheme.value = {
-		bodyColor: '#f8fafc',
-		primaryColor: '#18a058',
-		primaryColorHover: '#36ad6a',
-		primaryColorPressed: '#0c7a43',
-		primaryColorSuppl: '#36ad6a',
-		cardColor: '#ffffff',
-		cardShadow: '2px 2px 4px #e4e4e4',
-	}
-	message.success('已重置为默认主题')
+	uiTheme.value = defaultTheme;
+	message.success('已重置为默认主题');
 }
 
 </script>
@@ -50,18 +43,24 @@ const handleReset = () => {
 				label-width="auto"
 				:model="uiTheme"
 			>
-				<h3>Naive UI 通用变量</h3>
 				<n-form-item label="页面背景色 (bodyColor)" path="bodyColor">
 					<n-color-picker v-model:value="uiTheme.bodyColor"/>
 				</n-form-item>
 				<n-form-item label="主色 (primaryColor)" path="primaryColor">
 					<n-color-picker v-model:value="uiTheme.primaryColor"/>
 				</n-form-item>
+				<n-form-item label="主色 (primaryColorHover)" path="primaryColorHover">
+					<n-color-picker v-model:value="uiTheme.primaryColorHover"/>
+				</n-form-item>
+				<n-form-item label="主色 (primaryColorPressed)" path="primaryColorPressed">
+					<n-color-picker v-model:value="uiTheme.primaryColorPressed"/>
+				</n-form-item>
+				<n-form-item label="主色 (primaryColorSuppl)" path="primaryColorSuppl">
+					<n-color-picker v-model:value="uiTheme.primaryColorSuppl"/>
+				</n-form-item>
 				<n-form-item label="卡片颜色 (cardColor)" path="cardColor">
 					<n-color-picker v-model:value="uiTheme.cardColor"/>
 				</n-form-item>
-				
-				<h3>您的自定义变量</h3>
 				<n-form-item label="自定义卡片阴影 (cardShadow)" path="cardShadow">
 					<n-input v-model:value="uiTheme.cardShadow"/>
 				</n-form-item>
