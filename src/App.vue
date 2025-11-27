@@ -32,111 +32,113 @@
 						/>
 					</n-layout-sider>
 					
-					<n-layout :native-scrollbar="false">
-						<n-layout-content
-							content-style="padding: 24px;"
-						>
-							<div class="router-view">
-								<router-view/>
-								<ThemeEditor />
-							</div>
-							
-							<IconConfigProvider size="14">
-								<n-layout-footer bordered style="margin-top: 24px; padding: 10px 40px;">
-									<n-grid cols="2">
-										<n-gi>
-											<p class="footer-element">
-												<Icon>
-													<Copyright/>
-												</Icon>
-												<span> 2025 洛谷保存站 </span>
-											</p>
-											<p class="footer-element">
-												<a href="https://github.com/laikit-dev/luogu-saver-next"
-												   class="footer-link">
+					<n-dialog-provider>
+						<n-layout :native-scrollbar="false">
+							<n-layout-content
+								content-style="padding: 24px;"
+							>
+								<div class="router-view">
+									<router-view/>
+									<ThemeEditor/>
+								</div>
+								
+								<IconConfigProvider size="14">
+									<n-layout-footer bordered style="margin-top: 24px; padding: 10px 40px;">
+										<n-grid cols="2">
+											<n-gi>
+												<p class="footer-element">
 													<Icon>
-														<Github/>
+														<Copyright/>
 													</Icon>
-													<span> GitHub </span>
-												</a>
-												<a href="https://help.luogu.me" class="footer-link">
+													<span> 2025 洛谷保存站 </span>
+												</p>
+												<p class="footer-element">
+													<a href="https://github.com/laikit-dev/luogu-saver-next"
+													   class="footer-link">
+														<Icon>
+															<Github/>
+														</Icon>
+														<span> GitHub </span>
+													</a>
+													<a href="https://help.luogu.me" class="footer-link">
+														<Icon>
+															<Book/>
+														</Icon>
+														<span> 帮助文档 </span>
+													</a>
+													<a href="https://help.luogu.me/docs/update" class="footer-link">
+														<Icon>
+															<History/>
+														</Icon>
+														<span> 更新日志 </span>
+													</a>
+												</p>
+												<p class="footer-element">
 													<Icon>
-														<Book/>
+														<Clock/>
 													</Icon>
-													<span> 帮助文档 </span>
-												</a>
-												<a href="https://help.luogu.me/docs/update" class="footer-link">
-													<Icon>
-														<History/>
-													</Icon>
-													<span> 更新日志 </span>
-												</a>
-											</p>
-											<p class="footer-element">
-												<Icon>
-													<Clock/>
-												</Icon>
-												<span> 本网站已运行 {{ timeSinceFound }} 秒 </span>
-											</p>
-											<p class="footer-element">
-												<a href="https://github.com/laikit-dev/luogu-saver/graphs/contributors"
-												   class="footer-link">
-													<Icon>
-														<Users/>
-													</Icon>
-													<span> 项目贡献者 </span>
-												</a>
-											</p>
-										</n-gi>
-										<n-gi>
-											<p class="footer-element right-aligned">
-												<Icon><Code/></Icon>
-												<span> 开发者：Federico2903 & Murasame & quanac-lcx </span>
-											</p>
-											<p class="footer-element right-aligned">
-												<a href="https://qm.qq.com/q/QVM9YFEb26" target="_blank"
-												   class="footer-link">
-													<Icon>
-														<Qq/>
-													</Icon>
-													<span>洛谷保存站用户群：1017248143（点击加入）</span>
-												</a>
-											</p>
-											<p class="footer-element right-aligned">
-												<a href="/privacy" class="footer-link">
-													<Icon>
-														<UserShield/>
-													</Icon>
-													<span>隐私协议</span>
-												</a>
-												<a href="/disclaimer" class="footer-link">
-													<Icon>
-														<ExclamationCircle/>
-													</Icon>
-													<span>免责声明</span>
-												</a>
-												<a href="/deletion" class="footer-link">
-													<Icon>
-														<TrashAlt/>
-													</Icon>
-													<span>数据移除政策</span>
-												</a>
-											</p>
-											<p class="footer-element right-aligned">
-												<a href="https://www.rainyun.com/MjUxMDAy_?s=saver" target="_blank"
-												   class="footer-link">
-													<Icon>
-														<Server/>
-													</Icon>
-													<span>本站由雨云提供支持</span>
-												</a>
-											</p>
-										</n-gi>
-									</n-grid>
-								</n-layout-footer>
-							</IconConfigProvider>
-						</n-layout-content>
-					</n-layout>
+													<span> 本网站已运行 {{ timeSinceFound }} 秒 </span>
+												</p>
+												<p class="footer-element">
+													<a href="https://github.com/laikit-dev/luogu-saver/graphs/contributors"
+													   class="footer-link">
+														<Icon>
+															<Users/>
+														</Icon>
+														<span> 项目贡献者 </span>
+													</a>
+												</p>
+											</n-gi>
+											<n-gi>
+												<p class="footer-element right-aligned">
+													<Icon><Code/></Icon>
+													<span> 开发者：Federico2903 & Murasame & quanac-lcx </span>
+												</p>
+												<p class="footer-element right-aligned">
+													<a href="https://qm.qq.com/q/QVM9YFEb26" target="_blank"
+													   class="footer-link">
+														<Icon>
+															<Qq/>
+														</Icon>
+														<span>洛谷保存站用户群：1017248143（点击加入）</span>
+													</a>
+												</p>
+												<p class="footer-element right-aligned">
+													<a href="/privacy" class="footer-link">
+														<Icon>
+															<UserShield/>
+														</Icon>
+														<span>隐私协议</span>
+													</a>
+													<a href="/disclaimer" class="footer-link">
+														<Icon>
+															<ExclamationCircle/>
+														</Icon>
+														<span>免责声明</span>
+													</a>
+													<a href="/deletion" class="footer-link">
+														<Icon>
+															<TrashAlt/>
+														</Icon>
+														<span>数据移除政策</span>
+													</a>
+												</p>
+												<p class="footer-element right-aligned">
+													<a href="https://www.rainyun.com/MjUxMDAy_?s=saver" target="_blank"
+													   class="footer-link">
+														<Icon>
+															<Server/>
+														</Icon>
+														<span>本站由雨云提供支持</span>
+													</a>
+												</p>
+											</n-gi>
+										</n-grid>
+									</n-layout-footer>
+								</IconConfigProvider>
+							</n-layout-content>
+						</n-layout>
+					</n-dialog-provider>
 				</n-layout>
 			</n-space>
 		</n-message-provider>
@@ -149,7 +151,7 @@ import { useRouter, useRoute } from 'vue-router';
 import {
 	NLayout, NLayoutSider, NLayoutContent, NLayoutFooter,
 	NSpace, NMenu, NConfigProvider, type GlobalThemeOverrides, NGrid, NGi,
-	type MenuOption, NMessageProvider, NBackTop
+	type MenuOption, NMessageProvider, NBackTop, NDialogProvider
 } from 'naive-ui';
 
 import {

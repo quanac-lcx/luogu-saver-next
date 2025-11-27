@@ -103,14 +103,24 @@ export default async function renderMarkdown(src) {
     const preprocessed = src.split(/\r?\n/).map(preprocessLine).join("\n");
 
     const uid = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    const codePlaceholder = (i) => `CODE?PLACEHOLDER${uid}?${i}?`;
     const mathDisplayPlaceholder = (i) => `MATH?DISPLAY${uid}?${i}?`;
     const mathInlinePlaceholder = (i) => `MATH?INLINE${uid}?${i}?`;
 
+    const codeBlocks = [];
+    const codeHtmlBlocks = [];
     const mathBlocks = [];
 
-    const mathRegex = /\$\$([\s\S]*?)\$\$|\$([^\$]+?)\$/g;
+    const codeRegex = /((?:^|\n)(`{3,}|~{3,})[^\n]*\n[\s\S]*?\n\2(?=\n|$))|(`+)([\s\S]*?)\3/g;
+    const mathRegex = /\$\$([\s\S]*?)\$\$|\$([^$]+?)\$/g;
 
-    let processed = preprocessed.replace(mathRegex, function (match, block, inline) {
+    let processed = preprocessed.replace(codeRegex, function(match) {
+        const idx = codeBlocks.push(match) - 1;
+        codeHtmlBlocks[idx] = match;
+        return codePlaceholder(idx);
+    });
+
+    processed = processed.replace(mathRegex, function(match, block, inline) {
         if (block !== undefined) {
             const idx = mathBlocks.push(block) - 1;
             return mathDisplayPlaceholder(idx);
@@ -119,6 +129,11 @@ export default async function renderMarkdown(src) {
             return mathInlinePlaceholder(idx);
         }
     });
+
+    for (let i = 0; i < codeHtmlBlocks.length; i++) {
+        const ph = codePlaceholder(i);
+        processed = processed.split(ph).join(codeHtmlBlocks[i] || '');
+    }
 
     let resultHtml;
     try {
