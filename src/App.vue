@@ -155,10 +155,10 @@ import {
 } from 'naive-ui';
 
 import {
-	HomeOutline, AppsOutline, PersonOutline,
+	HomeOutline, AppsOutline,
 	SearchOutline, BrushOutline, ShareSocialOutline, ListOutline,
 	AtOutline, CloudCircleOutline, CloudDownloadOutline, ImageOutline, KeyOutline,
-	StatsChartOutline, HammerOutline, GlobeOutline
+	StatsChartOutline, HammerOutline, GlobeOutline, SettingsOutline
 } from '@vicons/ionicons5';
 
 import { Icon, IconConfigProvider } from '@vicons/utils';
@@ -212,11 +212,6 @@ const menuOptions : MenuOption[] = [
 		label: '主页',
 		key: 'home',
 		icon: renderIcon(HomeOutline)
-	},
-	{
-		label: '用户',
-		key: 'user',
-		icon: renderIcon(PersonOutline)
 	},
 	{
 		label: '搜索',
@@ -286,6 +281,11 @@ const menuOptions : MenuOption[] = [
 		label: '关于',
 		key: 'about',
 		icon: renderIcon(AppsOutline)
+	},
+	{
+		label: '设置',
+		key: 'settings',
+		icon: renderIcon(SettingsOutline)
 	}
 ];
 

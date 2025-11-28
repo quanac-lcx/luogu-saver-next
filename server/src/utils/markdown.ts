@@ -1,15 +1,18 @@
 import markdownit from "markdown-it";
 import markdownItAttrs from "markdown-it-attrs";
 import markdownItContainer from "markdown-it-container";
-import { createHighlighter } from 'shiki';
-import { fromHighlighter } from '@shikijs/markdown-it/core';
 
-let mdPromise = null;
+let mdPromise: Promise<markdownit> | null = null;
 
 async function getMdInstance() {
     if (mdPromise) return mdPromise;
 
     mdPromise = (async () => {
+        // @ts-ignore
+        const { createHighlighter } = await import('shiki');
+        // @ts-ignore
+        const { fromHighlighter } = await import('@shikijs/markdown-it/core');
+
         const highlighter = await createHighlighter({
             themes: ['github-light'],
             langs: [
@@ -21,9 +24,6 @@ async function getMdInstance() {
                 'markdown'
             ]
         });
-        const supportedLangs = new Set(
-            highlighter.getLoadedLanguages().map((lang) => lang.toLowerCase())
-        );
 
         const md = markdownit({
             html: true,
@@ -34,18 +34,17 @@ async function getMdInstance() {
         md.use(fromHighlighter(highlighter, {
             theme: 'github-light'
         }));
-        const renderPlainFence = (tokens, idx) => {
+
+        const renderPlainFence = (tokens: any[], idx: number) => {
             const token = tokens[idx];
             const lang = (token.info || "").trim().split(/\s+/)[0].toLowerCase();
             const langAddon = lang ? ` language-${md.utils.escapeHtml(lang)}` : "";
             return `<pre class="md-plain${langAddon}"><code class="md-plain${langAddon}">${md.utils.escapeHtml(token.content)}</code></pre>`;
         };
+
         const originalFence = md.renderer.rules.fence;
-        md.renderer.rules.fence = function(tokens, idx, options, env, slf) {
+        md.renderer.rules.fence = function (tokens: any[], idx: number, options: any, env: any, slf: any) {
             const lang = (tokens[idx].info || "").trim().split(/\s+/)[0].toLowerCase();
-            if (!lang || !supportedLangs.has(lang)) {
-                return renderPlainFence(tokens, idx);
-            }
             try {
                 return originalFence
                     ? originalFence(tokens, idx, options, env, slf)
@@ -58,7 +57,7 @@ async function getMdInstance() {
         md.use(markdownItAttrs);
 
         md.use(markdownItContainer, "align", {
-            render: (tokens, idx) => {
+            render: (tokens: any[], idx: number) => {
                 if (tokens[idx].nesting === 1) {
                     const m = tokens[idx].attrs ? (tokens[idx].attrs[0]?.length ? tokens[idx].attrs[0][0] : "") : "";
                     const cls = m ? `md-align-${m}` : "md-align-center";
@@ -68,7 +67,7 @@ async function getMdInstance() {
         });
 
         md.use(markdownItContainer, "epigraph", {
-            render: (tokens, idx) => {
+            render: (tokens: any[], idx: number) => {
                 if (tokens[idx].nesting === 1) {
                     return `<div class="md-epigraph"><div class="epigraph-body">`;
                 } else {
@@ -84,7 +83,7 @@ async function getMdInstance() {
 
         ["info", "warning", "success", "error"].forEach((name) => {
             md.use(markdownItContainer, name, {
-                render: (tokens, idx) => {
+                render: (tokens: any[], idx: number) => {
                     const info = tokens[idx].info || "";
                     if (tokens[idx].nesting === 1) {
                         const titleMatch = info.match(/\[(.*)\]$/);
@@ -99,7 +98,7 @@ async function getMdInstance() {
         });
 
         md.use(markdownItContainer, "cute-table", {
-            render: (tokens, idx) => {
+            render: (_tokens: any[], _idx: number) => {
                 return "";
             }
         });
@@ -110,13 +109,14 @@ async function getMdInstance() {
     return mdPromise;
 }
 
-export default async function renderMarkdown(src) {
+export default async function renderMarkdown(src: string) {
     if (!src) return "";
 
     const md = await getMdInstance();
 
     const pattern = /^(:{2,})([\w|-]+)(\s*\[.*?\])?(\s*\{.*?\})?$/;
-    function preprocessLine(line) {
+
+    function preprocessLine(line: string) {
         const match = line.match(pattern);
         if (match) {
             const colons = match[1];
@@ -133,24 +133,25 @@ export default async function renderMarkdown(src) {
     const preprocessed = src.split(/\r?\n/).map(preprocessLine).join("\n");
 
     const uid = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    const codePlaceholder = (i) => `CODE?PLACEHOLDER${uid}?${i}?`;
-    const mathDisplayPlaceholder = (i) => `MATH?DISPLAY${uid}?${i}?`;
-    const mathInlinePlaceholder = (i) => `MATH?INLINE${uid}?${i}?`;
 
-    const codeBlocks = [];
-    const codeHtmlBlocks = [];
-    const mathBlocks = [];
+    const codePlaceholder = (i: number) => `CODE?PLACEHOLDER${uid}?${i}?`;
+    const mathDisplayPlaceholder = (i: number) => `MATH?DISPLAY${uid}?${i}?`;
+    const mathInlinePlaceholder = (i: number) => `MATH?INLINE${uid}?${i}?`;
+
+    const codeBlocks: string[] = [];
+    const codeHtmlBlocks: string[] = [];
+    const mathBlocks: string[] = [];
 
     const codeRegex = /((?:^|\n)(`{3,}|~{3,})[^\n]*\n[\s\S]*?\n\2(?=\n|$))|(`+)([\s\S]*?)\3/g;
-    const mathRegex = /\$\$([\s\S]*?)\$\$|\$([^$]+?)\$/g;
+    const mathRegex = /\$\$([\s\S]*?)\$\$|\$([^\$]+?)\$/g;
 
-    let processed = preprocessed.replace(codeRegex, function(match) {
+    let processed = preprocessed.replace(codeRegex, function (match: string) {
         const idx = codeBlocks.push(match) - 1;
         codeHtmlBlocks[idx] = match;
         return codePlaceholder(idx);
     });
 
-    processed = processed.replace(mathRegex, function(match, block, inline) {
+    processed = processed.replace(mathRegex, function (match: string, block: string, inline: string) {
         if (block !== undefined) {
             const idx = mathBlocks.push(block) - 1;
             return mathDisplayPlaceholder(idx);
@@ -168,11 +169,12 @@ export default async function renderMarkdown(src) {
     let resultHtml;
     try {
         resultHtml = md.render(processed);
-    } catch (err) {
-        return `<p>渲染失败：${md.utils ? md.utils.escapeHtml(err.message) : 'Render Error'}</p>`;
+    } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'Render Error';
+        return `<p>渲染失败：${md.utils ? md.utils.escapeHtml(msg) : 'Render Error'}</p>`;
     }
 
-    function escapeHtmlInMath(str) {
+    function escapeHtmlInMath(str: string) {
         if (!str) return "";
         return String(str)
             .replace(/&/g, "&amp;")
@@ -187,7 +189,7 @@ export default async function renderMarkdown(src) {
         resultHtml = resultHtml.split(inline).join(`$${escapeHtmlInMath(mathBlocks[i])}$`);
     }
 
-    function replaceUI(s) {
+    function replaceUI(s: string) {
         return s.split('<table>')
             .join('<div class="table-container"><table>')
             .split('</table>')
