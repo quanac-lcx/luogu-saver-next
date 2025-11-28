@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type Component, inject, computed } from 'vue'
 import { NIcon, NStatistic } from 'naive-ui'
-import { uiThemeKey, type UiThemeVars } from "@/styles/themeKeys.ts";
+import { uiThemeKey, type UiThemeVars } from "@/styles/theme/themeKeys.ts";
 import Card from './Card.vue'
 
 const themeVars: UiThemeVars = inject(uiThemeKey)!;

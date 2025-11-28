@@ -12,8 +12,18 @@ async function getMdInstance() {
     mdPromise = (async () => {
         const highlighter = await createHighlighter({
             themes: ['github-light'],
-            langs: ['cpp', 'java', 'python', 'javascript', 'typescript', 'sql', 'bash', 'json', 'html', 'css', 'go', 'rust']
+            langs: [
+                'cpp', 'java', 'python',
+                'javascript', 'typescript',
+                'sql', 'bash', 'json', 'html',
+                'css', 'go', 'rust', 'ruby', 'php',
+                'csharp', 'kotlin', 'swift', 'haskell',
+                'markdown'
+            ]
         });
+        const supportedLangs = new Set(
+            highlighter.getLoadedLanguages().map((lang) => lang.toLowerCase())
+        );
 
         const md = markdownit({
             html: true,
@@ -24,6 +34,26 @@ async function getMdInstance() {
         md.use(fromHighlighter(highlighter, {
             theme: 'github-light'
         }));
+        const renderPlainFence = (tokens, idx) => {
+            const token = tokens[idx];
+            const lang = (token.info || "").trim().split(/\s+/)[0].toLowerCase();
+            const langAddon = lang ? ` language-${md.utils.escapeHtml(lang)}` : "";
+            return `<pre class="md-plain${langAddon}"><code class="md-plain${langAddon}">${md.utils.escapeHtml(token.content)}</code></pre>`;
+        };
+        const originalFence = md.renderer.rules.fence;
+        md.renderer.rules.fence = function(tokens, idx, options, env, slf) {
+            const lang = (tokens[idx].info || "").trim().split(/\s+/)[0].toLowerCase();
+            if (!lang || !supportedLangs.has(lang)) {
+                return renderPlainFence(tokens, idx);
+            }
+            try {
+                return originalFence
+                    ? originalFence(tokens, idx, options, env, slf)
+                    : renderPlainFence(tokens, idx);
+            } catch {
+                return renderPlainFence(tokens, idx);
+            }
+        };
 
         md.use(markdownItAttrs);
 

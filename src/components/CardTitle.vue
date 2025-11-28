@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, type Component, type CSSProperties } from 'vue';
 import { NIcon, NCard, NH1, NText } from 'naive-ui';
-import { uiThemeKey, type UiThemeVars } from '@/styles/themeKeys';
+import { uiThemeKey, type UiThemeVars } from '@/styles/theme/themeKeys.ts';
 import { inject } from 'vue';
 import { hexToRgba } from '@/utils/render';
 

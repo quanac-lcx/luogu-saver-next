@@ -172,8 +172,8 @@ import { renderIcon } from '@/utils/render';
 
 import ThemeEditor from '@/components/ThemeEditor.vue';
 
-import { uiThemeKey, type UiThemeVars } from '@/styles/themeKeys';
-import { defaultTheme } from "@/styles/default-theme.ts";
+import { uiThemeKey, type UiThemeVars } from '@/styles/theme/themeKeys.ts';
+import { defaultTheme } from "@/styles/theme/default-theme.ts";
 
 const router = useRouter();
 const route = useRoute();

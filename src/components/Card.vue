@@ -2,7 +2,7 @@
 import { type CSSProperties, inject } from "vue";
 import { NCard, NH3, NIcon } from 'naive-ui';
 import { computed, type Component } from 'vue'
-import { uiThemeKey, type UiThemeVars } from '@/styles/themeKeys';
+import { uiThemeKey, type UiThemeVars } from '@/styles/theme/themeKeys.ts';
 
 const themeVars: UiThemeVars = inject(uiThemeKey)!;
 

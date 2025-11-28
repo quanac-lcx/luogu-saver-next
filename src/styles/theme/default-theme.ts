@@ -1,4 +1,4 @@
-import { type UiThemeVars } from "@/styles/themeKeys";
+import { type UiThemeVars } from "@/styles/theme/themeKeys.ts";
 
 export const defaultTheme: UiThemeVars = {
     bodyColor: '#f8fafc',
