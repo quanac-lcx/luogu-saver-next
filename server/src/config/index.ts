@@ -39,6 +39,8 @@ interface Config {
         maxRequestToken: number;
         regenerationSpeed: number;
         regenerationInterval: number;
+        maxQueueLength: number;
+        processInterval: number;
     };
 }
 
@@ -93,8 +95,14 @@ export const config: Config = {
         regenerationSpeed: process.env.QUEUE_REGENERATION_SPEED
             ? parseFloat(process.env.QUEUE_REGENERATION_SPEED)
             : 1,
-        regenerationInterval: process.env.QUEUE_REGENERATION_INTERVAl
+        regenerationInterval: process.env.QUEUE_REGENERATION_INTERVAL
             ? parseInt(process.env.QUEUE_REGENERATION_INTERVAL, 10)
             : 1000,
+        maxQueueLength: process.env.QUEUE_MAX_QUEUE_LENGTH
+            ? parseInt(process.env.QUEUE_MAX_QUEUE_LENGTH, 10)
+            : 1000,
+        processInterval: process.env.QUEUE_PROCESS_INTERVAL
+            ? parseInt(process.env.QUEUE_PROCESS_INTERVAL, 10)
+            : 100,
     }
 }

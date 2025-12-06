@@ -14,6 +14,7 @@ import { responseHelper } from './middlewares/response';
 import path from "path";
 import history from "koa2-connect-history-api-fallback";
 import serve from "koa-static";
+import { initializeWorkers } from "@/workers";
 
 const app = new Koa();
 
@@ -32,6 +33,7 @@ if (config.env === 'production') {
 
 AppDataSource.initialize()
     .then(() => {
+        initializeWorkers();
         app.listen(config.port, () => {
             logger.info({ port: config.port }, `Server started.`);
         });

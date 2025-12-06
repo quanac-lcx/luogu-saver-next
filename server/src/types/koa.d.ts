@@ -1,3 +1,5 @@
+import 'koa';
+
 declare module 'koa' {
     interface Context {
         success(data?: any, msg?: string): void;
