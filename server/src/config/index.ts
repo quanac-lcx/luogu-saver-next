@@ -42,6 +42,9 @@ interface Config {
         maxQueueLength: number;
         processInterval: number;
     };
+    network: {
+        timeout: number;
+    };
 }
 
 export const config: Config = {
@@ -104,5 +107,10 @@ export const config: Config = {
         processInterval: process.env.QUEUE_PROCESS_INTERVAL
             ? parseInt(process.env.QUEUE_PROCESS_INTERVAL, 10)
             : 100,
+    },
+    network: {
+        timeout: process.env.NETWORK_TIMEOUT
+            ? parseInt(process.env.NETWORK_TIMEOUT, 10)
+            : 30000,
     }
 }

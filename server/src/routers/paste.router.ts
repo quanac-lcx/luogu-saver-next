@@ -7,24 +7,30 @@ import { PasteService } from '@/services/paste.service';
 
 router.get('/query/:id', async (ctx: Context) => {
     const pasteId = ctx.params.id;
-    const paste = await PasteService.getPasteById(pasteId);
-    await paste?.loadRelationships();
-    if (paste) {
-        if (paste.deleted) {
-            ctx.fail(403, paste.deletedReason);
+    try {
+        const paste = await PasteService.getPasteById(pasteId);
+        if (!paste) {
+            ctx.fail(404, 'Paste not found');
+            return;
         }
-        else {
+        await paste.renderContent();
+        if (paste.deleted) {
+            ctx.fail(403, paste.deleteReason);
+        } else {
             ctx.success(paste);
         }
-    }
-    else {
-        ctx.fail(404, 'Paste not found');
+    } catch (error) {
+        ctx.fail(500, 'Failed to retrieve paste');
     }
 });
 
 router.get('/count', async (ctx: Context) => {
-    const count = await PasteService.getPasteCount();
-    ctx.success({ count });
+    try {
+        const count = await PasteService.getPasteCount();
+        ctx.success({count});
+    } catch (error) {
+        ctx.fail(500, 'Failed to retrieve paste count');
+    }
 });
 
 export default router;

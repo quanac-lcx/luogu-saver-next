@@ -1,11 +1,13 @@
 import { VectorService } from "@/services/vector.service";
 import { ArticleService } from "@/services/article.service";
-import { redisClient } from "@/config/redis";
+import { redisClient } from "@/lib/redis";
 import { config } from "@/config";
-import { logger } from "@/utils/logger";
+import { logger } from "@/lib/logger";
 import { Article } from "@/entities/article";
 
 import stringSimilarity from 'string-similarity';
+
+type RecommendedArticle = Article & { reason: string };
 
 export class RecommendationService {
     private static async getSimilarArticles(id: string, count: number): Promise<string[]> {
@@ -104,8 +106,8 @@ export class RecommendationService {
         }
     }
 
-    private static filterUselessFields(articles: Article & { reason: string} []): Partial<Article & { reason: string }> {
-        return articles.map((article: Article) => {
+    private static filterUselessFields(articles: RecommendedArticle[]): Partial<RecommendedArticle>[] {
+        return articles.map((article: RecommendedArticle) => {
             return {
                 id: article.id,
                 title: article.title,
@@ -137,23 +139,24 @@ export class RecommendationService {
         const previouslyRecommended = await this.getRecommendedArticles(deviceId);
         for (const recId of previouslyRecommended) readArticles.add(recId);
         const filtered = (this.filterArticles(recommendations, readArticles)).slice(0, count);
-        const result = await ArticleService.getArticlesByIds(filtered);
+        const result: Article[] = await ArticleService.getArticlesByIds(filtered);
         await this.recordRecommendedArticles(deviceId, filtered);
         logger.debug({ deviceId, recommendation: filtered }, `Final recommendations`);
+        const resultWithReason: RecommendedArticle[] = [];
         for (const article of result) {
-            if (vectorResults.includes(article.id)) article['reason'] = 'vector';
-            else if (randomResults.includes(article.id)) article['reason'] = 'random';
-            else if (hotResults.includes(article.id)) article['reason'] = 'hot';
-            else article['reason'] = 'other';
+            if (vectorResults.includes(article.id)) resultWithReason.push({ ...article, reason: 'vector' } as RecommendedArticle);
+            else if (randomResults.includes(article.id)) resultWithReason.push({ ...article, reason: 'random' } as RecommendedArticle);
+            else if (hotResults.includes(article.id)) resultWithReason.push({ ...article, reason: 'hot' } as RecommendedArticle);
+            else resultWithReason.push({ ...article, reason: 'other' } as RecommendedArticle);
         }
-        return this.filterUselessFields(result);
+        return this.filterUselessFields(resultWithReason);
     }
 
     static async getRelevantArticle(articleId: string, fromVector: number = 5) {
         const similarIds = await this.getSimilarArticles(articleId, fromVector * 3);
         const article = await ArticleService.getArticleById(articleId);
         const originTitle = article?.title || '';
-        const authorId = article?.authorUid || '';
+        const authorId = article?.authorId || 0;
         const authorArticles = (await ArticleService.getArticlesByAuthor(authorId)).map(a => ({ id: a.id, title: a.title }));
         const finalResult = [], titleSimilarIds = [];
         for (const article of authorArticles) {
@@ -173,10 +176,11 @@ export class RecommendationService {
             appendedCount++;
         }
         const articles = await ArticleService.getArticlesByIds(finalResult);
+        const articlesWithReason: RecommendedArticle[] = [];
         for (const article of articles) {
-            if (titleSimilarIds.includes(article.id)) article['reason'] = 'title';
-            else article['reason'] = 'vector';
+            if (titleSimilarIds.includes(article.id)) articlesWithReason.push({ ...article, reason: 'title' } as RecommendedArticle);
+            else articlesWithReason.push({ ...article, reason: 'vector' } as RecommendedArticle);
         }
-        return this.filterUselessFields(articles);
+        return this.filterUselessFields(articlesWithReason);
     }
 }

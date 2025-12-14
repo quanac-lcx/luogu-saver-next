@@ -29,8 +29,7 @@ const loadMore = async () => {
 	error.value = false;
 
 	try {
-		const res = await getRecommendations();
-		const newArticles = res.data.recommendations || [];
+		const newArticles = await getRecommendations() || [];
 
 		if (newArticles.length > 0) {
 			everReturned.value = true;

@@ -3,5 +3,5 @@ import type { ApiResponse } from "@/types/common";
 import type { Article } from "@/types/article";
 
 export async function getRecommendations() {
-    return (await apiFetch('/plaza/get')) as ApiResponse<{ recommendation: Article[] }>;
+    return (await apiFetch('/plaza/get')) as ApiResponse<Article[]>;
 }

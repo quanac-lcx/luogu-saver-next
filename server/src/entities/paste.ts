@@ -1,13 +1,14 @@
 import {
     Entity, BaseEntity, PrimaryColumn,
-    Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn
+    Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, Index
 } from 'typeorm';
 
 import { Type } from 'class-transformer';
 import { User } from './user';
-import renderMarkdown from '@/utils/markdown';
+import renderMarkdown from '@/lib/markdown';
 
 @Entity({ name: 'paste' })
+@Index('idx_author_id', ['authorId'])
 export class Paste extends BaseEntity {
     @PrimaryColumn({ length: 8 })
     id: string;
@@ -15,11 +16,11 @@ export class Paste extends BaseEntity {
     @Column()
     title: string;
 
-    @Column({ type: 'mediumtext', nullable: true })
-    content?: string;
+    @Column({ type: 'mediumtext' })
+    content: string;
 
-    @Column({ name: 'author_uid', unsigned: true })
-    authorUid?: number;
+    @Column({ name: 'author_id', unsigned: true })
+    authorId: number;
 
     @Column({ type: 'tinyint', default: 0 })
     deleted: boolean;
@@ -32,17 +33,16 @@ export class Paste extends BaseEntity {
     @Type(() => Date)
     updatedAt: Date;
 
-    @Column({ name: 'deleted_reason', default: '作者要求删除' })
-    deletedReason: string;
+    @Column({ name: 'delete_reason', default: '管理员删除' })
+    deleteReason: string;
 
     @ManyToOne(() => User)
-    @JoinColumn({ name: "authorUid" })
+    @JoinColumn({ name: "author_id" })
     author?: User;
 
     renderedContent?: string;
 
-    async loadRelationships(loadUser = true, renderContent = true) {
-        if (loadUser) this.author = this.authorUid ? (await User.findById(this.authorUid))! : undefined;
-        if (renderContent) this.renderedContent = this.content ? await renderMarkdown(this.content) : undefined;
+    async renderContent() {
+        this.renderedContent = this.content ? await renderMarkdown(this.content) : undefined;
     }
 }

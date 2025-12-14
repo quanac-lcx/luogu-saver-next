@@ -1,33 +1,26 @@
-import { BaseEntity, Entity, PrimaryColumn, Column, Index, CreateDateColumn } from "typeorm";
-
-import { Type } from "class-transformer";
-
-import { TaskStatus, TaskType } from '@/constants/task';
-
-@Index("idx_expire_time", ["expireTime"])
+import { BaseEntity, Entity, PrimaryColumn, Column, CreateDateColumn } from "typeorm";
+import { TaskStatus, TaskType } from "@/shared/task";
 
 @Entity({ name: 'task' })
 export class Task extends BaseEntity {
-    @PrimaryColumn({ type: 'varchar', length: 8 })
+    @PrimaryColumn({ type: 'varchar', length: 32 })
     id: string;
 
-    @Column({ type: 'text' })
-    info: string;
+    @Column({ type: 'text', nullable: true })
+    info: string | null;
 
     @Column({ type: 'int', default: TaskStatus.PENDING })
-    status: Task;
+    status: TaskStatus;
 
     @CreateDateColumn({ name: 'created_at' })
-    @Type(() => Date)
     createdAt: Date;
 
-    @Column({ name: "expire_time" })
-    @Type(() => Date)
-    expireTime: Date;
-
-    @Column({ type: 'int' })
+    @Column({ type: 'varchar' })
     type: TaskType;
 
-    @Column({ name: "oid" })
-    originId: string;
+    @Column({ type: 'varchar', nullable: true })
+    target: string;
+
+    @Column({ type: 'json' })
+    payload: any;
 }

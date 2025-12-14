@@ -13,8 +13,8 @@ export const AppDataSource = new DataSource({
     password: config.db.password,
     database: config.db.database,
 
-    synchronize: false,
-    logging: false,
+    synchronize: true,
+    logging: true,
 
     entities: [path.join(__dirname, "/entities/*.ts")],
     namingStrategy: new SnakeNamingStrategy(),

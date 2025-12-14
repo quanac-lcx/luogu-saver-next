@@ -4,7 +4,7 @@ export interface Paste {
     id: string;
     title: string;
     content: string;
-    authorUid?: number;
+    authorId?: number;
     deleted: boolean;
     createdAt: number;
     updatedAt: number;

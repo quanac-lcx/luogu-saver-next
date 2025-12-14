@@ -1,21 +1,21 @@
 import {
-    Entity, BaseEntity, PrimaryGeneratedColumn,
+    Entity, BaseEntity, PrimaryColumn,
     Column, CreateDateColumn, UpdateDateColumn
 } from 'typeorm';
 
-import { UserColor } from '@/constants/user-color';
+import { UserColor } from '@/shared/user';
 import { Cacheable } from '@/decorators/cacheable';
 
 @Entity({ name: 'user' })
 export class User extends BaseEntity {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn({ type: 'int', unsigned: true })
     id: number;
 
-    @Column({ nullable: true })
-    name?: string;
+    @Column()
+    name: string;
 
-    @Column({ type: 'varchar', nullable: true })
-    color?: UserColor;
+    @Column({ type: 'varchar' })
+    color: UserColor;
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: number;

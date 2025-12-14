@@ -4,7 +4,7 @@ export interface Article {
     id: string;
     title: string;
     content?: string;
-    authorUid?: number;
+    authorId?: number;
     category?: number;
     upvote?: number;
     favorCount?: number;

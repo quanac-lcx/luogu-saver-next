@@ -6,7 +6,7 @@ import { config } from './config';
 import { AppDataSource } from './data-source';
 
 import router from './routers';
-import { logger } from './utils/logger';
+import { logger } from './lib/logger';
 
 import { authorization } from "@/middlewares/authorization";
 import { trackingMiddleware } from './middlewares/tracking';
@@ -14,7 +14,7 @@ import { responseHelper } from './middlewares/response';
 import path from "path";
 import history from "koa2-connect-history-api-fallback";
 import serve from "koa-static";
-import { initializeWorkers } from "@/workers";
+import * as worker from '@/workers';
 
 const app = new Koa();
 
@@ -33,7 +33,7 @@ if (config.env === 'production') {
 
 AppDataSource.initialize()
     .then(() => {
-        initializeWorkers();
+        worker.bootstrap();
         app.listen(config.port, () => {
             logger.info({ port: config.port }, `Server started.`);
         });

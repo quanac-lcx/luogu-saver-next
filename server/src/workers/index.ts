@@ -1,33 +1,38 @@
+import { WorkerHost } from '@/workers/worker-host';
+import { TaskProcessor } from '@/workers/task-processor';
+import { PointGuard } from '@/lib/point-guard';
+import { SaveTask, TaskType } from '@/shared/task';
+import { QUEUE_NAMES } from '@/shared/constants';
+import { logger } from '@/lib/logger';
+
+import { ArticleHandler } from '@/workers/handlers/task/article.handler';
 import { config } from "@/config";
-import { Queue } from '@/utils/queue';
-import type { UserTask } from '@/types/user-task';
-import * as processorWorker from './processor.worker';
+import { WorkerOptions } from "bullmq";
 
-let requestToken = config.queue.maxRequestToken;
-const taskQueue: Queue<UserTask> = new Queue<UserTask>();
+export function bootstrap() {
+    const saveTaskPointGuard = new PointGuard('save_task_guard', 100, 100);
+    const saveProcessor = new TaskProcessor<SaveTask>();
 
-function scheduleTokenRegeneration() {
-    setInterval(
-        () => {
-            requestToken = Math.min(
-                requestToken + config.queue.regenerationSpeed,
-                config.queue.maxRequestToken
-            );
-        },
-        config.queue.regenerationInterval
-    )
-}
+    saveProcessor.registerHandler(new ArticleHandler());
 
-function sendTaskToProcessor() {
-    if (taskQueue.count() && requestToken > 0 && !taskQueue.isRunningFull()) {
-        requestToken -= 1;
-        const task = taskQueue.popTask();
-        queue.incRunning();
-        processorWorker.executeTask(task).finally(() => taskQueue.decRunning());
-    }
-}
+    const saveWorkerHost = new WorkerHost<SaveTask>(
+        QUEUE_NAMES[TaskType.SAVE],
+        saveProcessor,
+        saveTaskPointGuard,
+        { concurrency: config.queue.concurrencyLimit } as WorkerOptions
+    );
 
-export function initializeWorkers() {
-    scheduleTokenRegeneration();
-    setInterval(sendTaskToProcessor, config.queue.processInterval);
+    process.on('SIGINT', async () => {
+        console.log('Shutting down workers...');
+        await saveWorkerHost.close();
+        process.exit(0);
+    });
+
+    process.on('SIGTERM', async () => {
+        console.log('Shutting down workers...');
+        await saveWorkerHost.close();
+        process.exit(0);
+    });
+
+    logger.info('Worker hosts initialized and running.');
 }

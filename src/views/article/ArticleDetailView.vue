@@ -48,7 +48,7 @@ const loadRelevant = async () => {
 	recLoading.value = true;
 	try {
 		const res = await getRelevant(articleId);
-		const items: PlazaArticle[] = res.data.relevant;
+		const items: PlazaArticle[] = res.data;
 		recommended.value = items || [];
 	} catch (err: any) {
 		console.error(err);

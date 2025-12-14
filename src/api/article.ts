@@ -23,5 +23,5 @@ export async function getArticleCount() {
 }
 
 export async function getRelevant(id) {
-    return (await apiFetch(`/article/relevant/${id}`)) as ApiResponse<{ relevant: PlazaArticle[] }>;
+    return (await apiFetch(`/article/relevant/${id}`)) as ApiResponse<PlazaArticle[]>;
 }

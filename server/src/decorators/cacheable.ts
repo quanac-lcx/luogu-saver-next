@@ -1,12 +1,13 @@
-import { redisClient } from '@/config/redis';
+import { redisClient } from '@/lib/redis';
 import { plainToInstance } from "class-transformer";
+import { logger } from "@/lib/logger";
 
 export type ClassConstructor<T> = { new(...args: any[]): T };
 
-export function Cacheable(
+export function Cacheable<T>(
     ttlSeconds: number = 60,
     keyGenerator: (...args: any[]) => string,
-    EntityClass?: ClassConstructor<any>
+    EntityClass?: ClassConstructor<T>
 ): MethodDecorator {
     return function (
         target: Object,
@@ -26,7 +27,7 @@ export function Cacheable(
                     return parsedResult;
                 }
             } catch (err) {
-                console.error(err);
+                logger.error({ err }, 'Error accessing Redis cache');
             }
             const result = await originalMethod.apply(this, args);
             if (result) {
