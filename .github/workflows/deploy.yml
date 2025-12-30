@@ -35,24 +35,21 @@ jobs:
           VITE_CDN_URL: ${{ secrets.OSS_DOMAIN }}/luogu-saver/
 
       # --------------------------------------------------
-      # 步骤 4: 【新增】上传 Assets 到对象存储 (S3 协议)
+      # 步骤 4: 上传 Assets 到对象存储 (S3 协议)
       # --------------------------------------------------
       - name: Upload Assets to S3 (RainYun/AWS)
-        uses: jakejarvis/s3-sync-action@v0.5.1
-        with:
-          args: --acl public-read --follow-symlinks --delete
         env:
-          AWS_S3_BUCKET: ${{ secrets.OSS_BUCKET }}
+          # 导入 Secrets 到环境变量
           AWS_ACCESS_KEY_ID: ${{ secrets.OSS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.OSS_KEY_SECRET }}
-          # 雨云/其他S3的 Endpoint 地址
-          AWS_ENDPOINT_URL: ${{ secrets.OSS_ENDPOINT }}
-          # 这里的 region 如果是用雨云随便填个 us-east-1 即可
-          AWS_REGION: 'us-east-1'
-          # 源目录：只上传静态资源
-          SOURCE_DIR: 'dist/assets'
-          # 目标目录：在 Bucket 里的文件夹路径
-          DEST_DIR: 'luogu-saver/assets'
+          AWS_DEFAULT_REGION: us-east-1 # 兼容协议必须填一个，随便填
+        run: |
+          # 使用原生 aws cli 命令
+          # --endpoint-url 是把请求发给雨云的关键
+          aws s3 sync dist/assets s3://${{ secrets.OSS_BUCKET }}/luogu-saver/assets \
+            --endpoint-url ${{ secrets.OSS_ENDPOINT }} \
+            --acl public-read \
+            --delete
 
       # --------------------------------------------------
       # 步骤 5: 发送 HTML 到 Nginx 服务器 (Server A)
