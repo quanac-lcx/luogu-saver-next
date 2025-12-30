@@ -1,6 +1,5 @@
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
-import cors from '@koa/cors';
 
 import { config } from './config';
 import { AppDataSource } from './data-source';
@@ -18,7 +17,6 @@ import * as worker from '@/workers';
 
 const app = new Koa();
 
-app.use(cors());
 app.use(bodyParser());
 app.use(authorization);
 app.use(trackingMiddleware);
