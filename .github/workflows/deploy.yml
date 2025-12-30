@@ -7,9 +7,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  # ==================================================
-  # 任务 1: 前端部署 (Server A + OSS)
-  # ==================================================
   deploy-frontend:
     runs-on: ubuntu-latest
     steps:
@@ -21,53 +18,36 @@ jobs:
         with:
           node-version: 22
 
-      # --------------------------------------------------
-      # 步骤 3: 构建前端 (注入 CDN 变量)
-      # --------------------------------------------------
       - name: Install & Build Frontend
         run: |
           npm install
           npm run build:frontend
         env:
-          # 1. 注入后端 API 地址
           VITE_API_URL: ${{ secrets.BACKEND_API_URL }}
-          # 2. 【新增】注入 OSS 域名，让 Vite 把资源路径改成 CDN 链接
           VITE_CDN_URL: ${{ secrets.OSS_DOMAIN }}/luogu-saver/
 
-      # --------------------------------------------------
-      # 步骤 4: 上传 Assets 到对象存储 (S3 协议)
-      # --------------------------------------------------
-      - name: Upload Assets to S3 (RainYun/AWS)
+      - name: Upload Assets to S3
         env:
-          # 导入 Secrets 到环境变量
           AWS_ACCESS_KEY_ID: ${{ secrets.OSS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.OSS_KEY_SECRET }}
-          AWS_DEFAULT_REGION: us-east-1 # 兼容协议必须填一个，随便填
+          AWS_DEFAULT_REGION: us-east-1
         run: |
-          # 使用原生 aws cli 命令
-          # --endpoint-url 是把请求发给雨云的关键
-          aws s3 sync dist/assets s3://${{ secrets.OSS_BUCKET }}/luogu-saver/assets \
+          aws s3 sync dist s3://${{ secrets.OSS_BUCKET }}/luogu-saver/ \
             --endpoint-url ${{ secrets.OSS_ENDPOINT }} \
             --acl public-read \
-            --delete
+            --delete \
+            --exclude "index.html"
 
-      # --------------------------------------------------
-      # 步骤 5: 发送 HTML 到 Nginx 服务器 (Server A)
-      # --------------------------------------------------
-      - name: Deploy to Server A
+      - name: Deploy Frontend
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SERVER_A_HOST }}
           username: root
           password: ${{ secrets.SERVER_A_PASSWORD }}
-          # 依然传输所有文件做兜底，确保 index.html 能到位
           source: "dist/*"
           target: "/opt/luogu-saver-frontend"
           strip_components: 1
 
-  # ==================================================
-  # 任务 2: 后端部署 (Server B)
-  # ==================================================
   deploy-backend:
     runs-on: ubuntu-latest
     needs: deploy-frontend
@@ -83,7 +63,7 @@ jobs:
           npm install
           npm run build 
 
-      - name: Deploy to Server B
+      - name: Deploy Backend
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SERVER_B_HOST }}
