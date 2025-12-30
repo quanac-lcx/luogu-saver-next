@@ -1,4 +1,4 @@
-name: Auto Deploy
+name: Auto Deploy with OSS
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   # ==================================================
-  # 任务 1: 前端部署 (Server A)
+  # 任务 1: 前端部署 (Server A + OSS)
   # ==================================================
   deploy-frontend:
     runs-on: ubuntu-latest
@@ -22,18 +22,40 @@ jobs:
           node-version: 22
 
       # --------------------------------------------------
-      # 步骤 4: 构建前端
+      # 步骤 3: 构建前端 (注入 CDN 变量)
       # --------------------------------------------------
       - name: Install & Build Frontend
         run: |
           npm install
           npm run build:frontend
         env:
-          # 始终注入后端 API 地址
+          # 1. 注入后端 API 地址
           VITE_API_URL: ${{ secrets.BACKEND_API_URL }}
+          # 2. 【新增】注入 OSS 域名，让 Vite 把资源路径改成 CDN 链接
+          VITE_CDN_URL: ${{ secrets.OSS_DOMAIN }}/luogu-saver/
 
       # --------------------------------------------------
-      # 步骤 6: 发送文件到 Nginx 服务器 (Server A)
+      # 步骤 4: 【新增】上传 Assets 到对象存储 (S3 协议)
+      # --------------------------------------------------
+      - name: Upload Assets to S3 (RainYun/AWS)
+        uses: jakejarvis/s3-sync-action@v0.5.1
+        with:
+          args: --acl public-read --follow-symlinks --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.OSS_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.OSS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.OSS_KEY_SECRET }}
+          # 雨云/其他S3的 Endpoint 地址
+          AWS_ENDPOINT_URL: ${{ secrets.OSS_ENDPOINT }}
+          # 这里的 region 如果是用雨云随便填个 us-east-1 即可
+          AWS_REGION: 'us-east-1'
+          # 源目录：只上传静态资源
+          SOURCE_DIR: 'dist/assets'
+          # 目标目录：在 Bucket 里的文件夹路径
+          DEST_DIR: 'luogu-saver/assets'
+
+      # --------------------------------------------------
+      # 步骤 5: 发送 HTML 到 Nginx 服务器 (Server A)
       # --------------------------------------------------
       - name: Deploy to Server A
         uses: appleboy/scp-action@master
@@ -41,8 +63,7 @@ jobs:
           host: ${{ secrets.SERVER_A_HOST }}
           username: root
           password: ${{ secrets.SERVER_A_PASSWORD }}
-          # 无论是否上传 OSS，我们都把所有文件传给服务器做兜底
-          # 如果走了 OSS，index.html 里引用的地址是 OSS 的，服务器上的 assets 不会被访问，但也无害
+          # 依然传输所有文件做兜底，确保 index.html 能到位
           source: "dist/*"
           target: "/opt/luogu-saver-frontend"
           strip_components: 1
@@ -52,7 +73,7 @@ jobs:
   # ==================================================
   deploy-backend:
     runs-on: ubuntu-latest
-    needs: deploy-frontend # 可选：让它并行跑可以删掉这行，为了稳妥可以留着
+    needs: deploy-frontend
     steps:
       - uses: actions/checkout@v6.0.1
       - uses: actions/setup-node@v6.1.0
@@ -64,7 +85,6 @@ jobs:
           cd server
           npm install
           npm run build 
-          # 你的 build 命令是 tsc && tsc-alias，会生成 dist
 
       - name: Deploy to Server B
         uses: appleboy/scp-action@master
@@ -72,7 +92,6 @@ jobs:
           host: ${{ secrets.SERVER_B_HOST }}
           username: root
           password: ${{ secrets.SERVER_B_PASSWORD }}
-          # 传输构建产物 + package.json (为了安装依赖)
           source: "server/dist/,server/package.json"
           target: "/opt/luogu-saver-backend"
           strip_components: 1
@@ -86,15 +105,10 @@ jobs:
           script: |
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            echo "Node version: $(node -v)"
-            echo "PM2 path: $(which pm2)"
-            cd /opt/luogu-saver-backend
             
-            # 安装生产依赖
+            cd /opt/luogu-saver-backend
             npm install --production
 
-            # PM2 维护
-            # 如果 ecosystem.config.js 存在则用它，不存在则直接启动
             pm2 describe luogu-backend > /dev/null
             if [ $? -eq 0 ]; then
               pm2 reload luogu-backend
