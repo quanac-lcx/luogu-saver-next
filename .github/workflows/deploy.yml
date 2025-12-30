@@ -1,8 +1,9 @@
-name: Full Stack Deploy with Optional OSS
+name: Auto Deploy
 
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   # ==================================================
