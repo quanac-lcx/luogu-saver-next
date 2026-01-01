@@ -20,6 +20,7 @@
 - **Broad Support:** Handles multiple content types efficiently.
 - **High Performance:** Utilizes client-side rendering for a smooth user experience.
 - **Responsive Design:** Optimized for use on desktops, tablets, and mobile devices.
+- **Intelligent Recommendations:** Suggests related content based on user activity.
 
 ## Build Instructions
 
@@ -66,6 +67,28 @@ You need a web server (e.g., **Nginx** or **Caddy**) to serve the static files f
 If you did not set the `VITE_API_URL` variable during the frontend build, the application defaults to sending requests to `/api` on the same domain.
 
 **Crucial Step:** You must configure your web server (Nginx/Caddy) to reverse proxy requests starting with `/api` to the running backend service (e.g., `localhost:3000`).
+
+## Development
+
+For development purposes, you can run both the frontend and backend in watch mode.
+
+### 1. Start the Backend in Watch Mode
+
+    cd server
+    npm install
+    npm run dev:backend
+    
+### 2. Start the Frontend in Watch Mode
+
+    cd ..
+    npm install
+    npm run dev:frontend    
+    
+Or you can use the combined command:
+
+    npm run dev
+
+The frontend development server will proxy API requests to the backend automatically.
 
 ## Contributing
 
