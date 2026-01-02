@@ -22,50 +22,81 @@
 - **Responsive Design:** Optimized for use on desktops, tablets, and mobile devices.
 - **Intelligent Recommendations:** Suggests related content based on user activity.
 
+## Architecture
+
+This project is a **Monorepo** managed by npm workspaces:
+
+- **Root:** Manages shared dev-dependencies (Prettier, TypeScript, etc.) and orchestration.
+- **`packages/frontend`:** Vue 3 + Vite application (Naive UI).
+- **`packages/backend`:** Koa + TypeScript API service.
+
 ## Build Instructions
 
 **Prerequisites:** Ensure you have [Node.js](https://nodejs.org/) (version 22.18.0 or higher) installed.
 
 ### 1. Clone the Repository
 
-    git clone https://github.com/Ark-Aak/luogu-saver-next.git
-    cd luogu-saver-next
+```bash
+git clone https://github.com/Ark-Aak/luogu-saver-next.git
+cd luogu-saver-next
+```
 
-### 2. Build the Frontend
+### 2. Install Dependencies
 
-Install dependencies and compile the frontend assets. You can optionally configure the API and CDN URLs using environment variables inline.
+Install dependencies for the root and all workspaces in one go:
 
-    npm install
-    # Optional: Set VITE_API_URL and VITE_CDN_URL if needed
-    # Example: VITE_API_URL=https://api.example.com npm run build:frontend
-    npm run build:frontend
+```bash
+npm install
+```
 
-_The compiled static files will be located in the `dist` directory._
+### 3. Build
 
-### 3. Build the Backend
+You can build the entire project (Frontend & Backend) with a single command:
 
-Navigate to the server directory to install dependencies and compile the backend.
+```bash
+npm run build
+```
 
-    cd server
-    npm install
-    npm run build:backend
+Or build them individually using npm workspaces:
 
-_The compiled backend files will be located in the `server/dist` directory._
+**Frontend Only:**
+
+```bash
+# Optional: Set environment variables inline
+# VITE_API_URL=[https://api.example.com](https://api.example.com) npm run build -w @luogu-saver-next/frontend
+npm run build -w @luogu-saver-next/frontend
+```
+
+*The compiled static files will be located in `packages/frontend/dist`.*
+
+**Backend Only:**
+
+```bash
+npm run build -w @luogu-saver-next/backend
+```
+
+*The compiled backend files will be located in `packages/backend/dist`.*
 
 ## Deployment
 
 ### 1. Run the Backend Server
 
-Start the backend application using Node.js.
+Navigate to the backend workspace or run directly from the root:
 
-    # Inside the /server directory
-    node dist/index.js
+```bash
+cd packages/backend
+# Install production dependencies only
+npm install --production
+# Start the server
+node dist/index.js
+```
 
 The server will start on the configured port (default is `3000`).
 
 ### 2. Serve the Frontend
 
-You need a web server (e.g., **Nginx** or **Caddy**) to serve the static files from the root `dist` directory.
+You need a web server (e.g., **Nginx** or **Caddy**) to serve the static files located in:
+`packages/frontend/dist`
 
 ### 3. Configuration & Proxying
 
@@ -75,25 +106,21 @@ If you did not set the `VITE_API_URL` variable during the frontend build, the ap
 
 ## Development
 
-For development purposes, you can run both the frontend and backend in watch mode.
+We use `concurrently` to run both frontend and backend in watch mode with a single command.
 
-### 1. Start the Backend in Watch Mode
+### Start Development Server
 
-    cd server
-    npm install
-    npm run dev:backend
+In the project root, simply run:
 
-### 2. Start the Frontend in Watch Mode
+```bash
+npm run dev
+```
 
-    cd ..
-    npm install
-    npm run dev:frontend
+This will:
 
-Or you can use the combined command:
-
-    npm run dev
-
-The frontend development server will proxy API requests to the backend automatically.
+1. Start the **Frontend** (Vite) in watch mode.
+2. Start the **Backend** (ts-node-dev) in watch mode.
+3. Output logs from both services in the same terminal (color-coded).
 
 ## Contributing
 
@@ -105,4 +132,6 @@ Contributions are welcome! To contribute to Luogu Saver Next:
 4. **Push** your changes to your forked repository.
 5. **Open** a Pull Request to the main repository.
 
-Please ensure your code adheres to the project's coding standards and includes appropriate tests.
+Please ensure your code adheres to the project's coding standards (Prettier) and includes appropriate tests.
+
+```
