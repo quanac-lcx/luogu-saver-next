@@ -20,6 +20,7 @@ interface Config {
         keyPrefix: string;
     };
     chroma: {
+        enable: boolean;
         ssl: boolean;
         host: string;
         port: number;
@@ -64,6 +65,7 @@ export const config: Config = {
         keyPrefix: process.env.REDIS_KEY_PREFIX || ''
     },
     chroma: {
+        enable: process.env.CHROMA_ENABLE === 'true',
         ssl: process.env.CHROMA_SSL === 'true',
         host: process.env.CHROMA_HOST || '127.0.0.1',
         port: process.env.CHROMA_PORT ? parseInt(process.env.CHROMA_PORT, 10) : 8000,

@@ -22,6 +22,7 @@ export class VectorService {
     }
 
     static async getVector(articleId: string) {
+        if (!config.chroma.enable) return [];
         const collection = await this.getCollection();
         try {
             const targetData = await collection.get({ ids: [articleId], include: ['embeddings'] });
@@ -36,6 +37,7 @@ export class VectorService {
     }
 
     static async getNearestVectors(embedding: number[], n: number) {
+        if (!config.chroma.enable) return { ids: [[]], distances: [[]] };
         try {
             if (!embedding || embedding.length === 0) {
                 return { ids: [[]], distances: [[]] };
