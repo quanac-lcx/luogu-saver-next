@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { NCard, NSpace, NButton, NText, NIcon } from 'naive-ui';
-import { AnalyticsOutline } from '@vicons/ionicons5'; // 需要安装图标库
+import { AnalyticsOutline } from '@vicons/ionicons5';
 
 const show = ref(false);
 

@@ -174,6 +174,10 @@ import { uiThemeKey, type UiThemeVars } from '@/styles/theme/themeKeys.ts';
 import { defaultTheme } from "@/styles/theme/default-theme.ts";
 import TrackingConsent from "@/components/TrackingConsent.vue";
 
+import socket from '@/utils/websocket.ts';
+
+socket.joinRoom('notification');
+
 const router = useRouter();
 const route = useRoute();
 

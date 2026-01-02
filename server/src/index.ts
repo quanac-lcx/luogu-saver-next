@@ -14,8 +14,36 @@ import path from "path";
 import history from "koa2-connect-history-api-fallback";
 import serve from "koa-static";
 import * as worker from '@/workers';
+import { Server } from 'socket.io';
+import http from 'http';
 
 const app = new Koa();
+const server = http.createServer(app.callback());
+const io = new Server(server, {
+    path: '/websocket',
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
+
+io.on('connection', (socket) => {
+    logger.info({ id: socket.id }, 'Client connected');
+
+    socket.on('join', (room) => {
+        socket.join(room);
+        logger.info({ id: socket.id, room }, 'Client joined room');
+    });
+
+    socket.on('leave', (room) => {
+        socket.leave(room);
+        logger.info({ id: socket.id, room }, 'Client left room');
+    });
+
+    socket.on('disconnect', () => {
+        logger.info({ id: socket.id }, 'Client disconnected');
+    });
+});
 
 app.use(bodyParser());
 app.use(authorization);
@@ -32,7 +60,7 @@ if (config.env === 'production') {
 AppDataSource.initialize()
     .then(() => {
         worker.bootstrap();
-        app.listen(config.port, () => {
+        server.listen(config.port, () => {
             logger.info({ port: config.port }, `Server started.`);
         });
     });
