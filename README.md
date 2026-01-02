@@ -133,5 +133,3 @@ Contributions are welcome! To contribute to Luogu Saver Next:
 5. **Open** a Pull Request to the main repository.
 
 Please ensure your code adheres to the project's coding standards (Prettier) and includes appropriate tests.
-
-```
