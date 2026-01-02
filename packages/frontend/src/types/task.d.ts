@@ -1,16 +1,4 @@
-export enum TaskStatus {
-    PENDING = 0,
-    RUNNING = 1,
-    SUCCESS = 2,
-    FAILED = 3
-}
-
-export enum TaskType {
-    SAVE = 'save',
-    AI_PROCESS = 'ai_process'
-}
-
-export interface Task {
+export interface TaskInfo {
     id: string;
     info: string | null;
     status: TaskStatus;
@@ -18,4 +6,29 @@ export interface Task {
     type: TaskType;
     target: string | null;
     payload: any;
+}
+
+export interface CommonTask {
+    type: TaskType;
+    payload: {
+        target: string;
+        [key: string]: any;
+    };
+}
+
+export interface SaveTask extends CommonTask {
+    type: TaskType.SAVE;
+    payload: {
+        target: SaveTarget;
+        targetId: string;
+        metadata: Record<string, any>;
+    };
+}
+
+export interface AiTask extends CommonTask {
+    type: TaskType.AI_PROCESS;
+    payload: {
+        target: string;
+        metadata: Record<string, any>;
+    };
 }

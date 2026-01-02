@@ -221,10 +221,7 @@ socket.joinRoom('notification');
 const router = useRouter();
 const route = useRoute();
 
-const activeKey = computed(() => {
-    console.log(JSON.stringify(route.meta));
-    return (route.meta.activeMenu as string) || (route.path as string).slice(1);
-});
+const activeKey = computed(() => (route.meta.activeMenu as string) || (route.path as string).slice(1));
 const collapsed = ref(true);
 const manualToggle = ref(false);
 

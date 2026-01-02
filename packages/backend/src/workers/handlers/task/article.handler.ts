@@ -11,6 +11,7 @@ import { User } from '@/entities/user';
 import { ArticleCategory } from '@/shared/article';
 import { logger } from '@/lib/logger';
 import { buildUser } from '@/utils/luogu-api';
+import { emitToRoom } from "@/lib/socket";
 
 function sha256(data: string): string {
     return createHash('sha256').update(data).digest('hex');
@@ -63,5 +64,6 @@ export class ArticleHandler implements TaskHandler<SaveTask> {
         }
         await ArticleService.saveArticle(article);
         await ArticleHistoryService.pushNewVersion(article.id, article.title, article.content);
+        emitToRoom(`article_${article.id}`, 'article:updated');
     }
 }

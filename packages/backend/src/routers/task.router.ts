@@ -7,11 +7,11 @@ import { TaskType } from '@/shared/task';
 const router = new Router<DefaultState, Context>({ prefix: '/task' });
 
 router.post('/create', async (ctx: Context) => {
-    const { type, payload, target } = ctx.request.body as {
+    const { type, payload } = ctx.request.body as {
         type?: TaskType;
         payload?: any;
-        target?: string;
     };
+    const target = payload.target;
     if (typeof type !== 'string' || typeof target !== 'string' || typeof payload !== 'object') {
         ctx.fail(400, 'Invalid request body');
         return;

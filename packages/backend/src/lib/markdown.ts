@@ -8,7 +8,6 @@ import rehypeRaw from 'rehype-raw';
 import remarkSmartypants from 'remark-smartypants';
 import { visit } from 'unist-util-visit';
 import crypto from 'crypto';
-import { logger } from '@/lib/logger';
 
 let processorPromise: Promise<any> | null = null;
 
@@ -35,7 +34,6 @@ async function getProcessor() {
                             data.hName = 'div';
                             data.hProperties = { className: ['md-epigraph'], 'data-author': author };
                         } else if (['info', 'warning', 'success', 'error'].includes(name)) {
-                            logger.debug({ attributes }, `Processing custom container: ${name}`);
                             const title = attributes.title || name.toUpperCase();
                             const open = attributes.open !== undefined;
                             data.hName = 'div';
@@ -166,8 +164,6 @@ export default async function renderMarkdown(src: string) {
             if (brace) {
                 attributes += brace.trim().slice(1, -1);
             }
-
-            logger.debug({ line, attributes }, `Preprocessing custom syntax: ${word}`);
 
             return `:::${word}{${attributes.trim()}}`;
         }

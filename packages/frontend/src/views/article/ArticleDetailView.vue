@@ -14,7 +14,8 @@ import {
     NAnchor,
     NAnchorLink,
     NTimeline,
-    NTimelineItem
+    NTimelineItem,
+    NSpin
 } from 'naive-ui';
 import {
     ShareSocialOutline,
@@ -28,7 +29,8 @@ import {
     TimeOutline
 } from '@vicons/ionicons5';
 
-import { getArticleById, getRelevant, getArticleHistory } from '@/api/article';
+import { useContentSaver } from '@/composables/useContentSaver';
+import { getArticleById, getRelevant, getArticleHistory, saveArticle } from '@/api/article';
 import type { Article, PlazaArticle, TocItem } from '@/types/article';
 import { hexToRgba } from '@/utils/render.ts';
 import { getCategoryLabel, getCategoryColor, getCategoryIcon, generateTocAndProcessHtml } from '@/utils/article';
@@ -41,9 +43,12 @@ import LoadingSkeleton from '@/components/LoadingSkeleton.vue';
 import { ARTICLE_CATEGORIES, UNKNOWN_CATEGORY } from '@/utils/constants';
 import { formatDate } from '@/utils/render';
 
+import socket from '@/utils/websocket';
+
 const route = useRoute();
 const router = useRouter();
 const message = useMessage();
+const { isSaving, handle404, stopSaving } = useContentSaver();
 
 const articleId = route.params.id as string;
 const article = ref<Article | null>(null);
@@ -61,6 +66,12 @@ interface VersionItem {
     title?: string;
 }
 const versionHistory = ref<VersionItem[]>([]);
+
+socket.joinRoom(`article_${articleId}`);
+socket.getInstance().on('article:updated', () => {
+	stopSaving();
+	loadData();
+});
 
 const loadRelevant = async () => {
     if (!articleId) return;
@@ -99,6 +110,10 @@ const loadData = async () => {
     loading.value = true;
     try {
         const res = await getArticleById(articleId);
+        if (res.code === 404) {
+            handle404(() => saveArticle(articleId));
+            return;
+        }
         article.value = res.data;
 
         if (article.value?.renderedContent) {
@@ -149,7 +164,8 @@ onMounted(() => {
 </script>
 
 <template>
-    <n-grid :x-gap="16" cols="1 l:8" responsive="screen">
+    <n-spin :show="isSaving" description="正在保存并处理..." class="saving-spin">
+        <n-grid :x-gap="16" cols="1 l:8" responsive="screen">
         <n-gi :span="1" class="sidebar-left">
             <SidebarWidget title="目录" :icon="ListOutline" class="toc-card" v-if="tocItems.length > 0">
                 <n-anchor :show-rail="true" :show-background="true" type="block" :bound="100">
@@ -378,10 +394,6 @@ onMounted(() => {
                             </div>
                         </div>
                     </Card>
-
-                    <Card v-else-if="!recLoading" title="相关推荐">
-                        <div style="padding: 12px; color: #666">暂无相关推荐</div>
-                    </Card>
                 </LoadingSkeleton>
             </div>
         </n-gi>
@@ -400,7 +412,8 @@ onMounted(() => {
                 </n-timeline>
             </SidebarWidget>
         </n-gi>
-    </n-grid>
+        </n-grid>
+    </n-spin>
 </template>
 
 <style scoped>
@@ -468,5 +481,12 @@ onMounted(() => {
 .article-meta .left {
     display: flex;
     align-items: center;
+}
+
+.saving-spin :deep(.n-spin-body) {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 </style>

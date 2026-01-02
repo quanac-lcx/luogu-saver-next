@@ -1,7 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 
-const URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : '/api';
-const path = '/websocket';
+const URL = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : '/';
+const path = import.meta.env.VITE_API_URL ? '/websocket' : '/api/websocket';
 
 const socket: Socket = io(URL, {
     path,
