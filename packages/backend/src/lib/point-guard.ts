@@ -55,7 +55,15 @@ export class PointGuard {
       end
     `;
 
-        const result = await this.redis.eval(script, 1, this.key, this.capacity, this.rate, cost, Date.now());
+        const result = await this.redis.eval(
+            script,
+            1,
+            this.key,
+            this.capacity,
+            this.rate,
+            cost,
+            Date.now()
+        );
 
         return result === 1;
     }

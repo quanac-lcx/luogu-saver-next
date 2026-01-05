@@ -9,7 +9,11 @@ export async function getArticleById(id: string) {
     return (await apiFetch(`/article/query/${id}`)) as ApiResponse<Article>;
 }
 
-export async function getRecentArticles(count: number, updatedAfter?: string, truncatedCount?: number) {
+export async function getRecentArticles(
+    count: number,
+    updatedAfter?: string,
+    truncatedCount?: number
+) {
     const params = new URLSearchParams();
     params.append('count', count.toString());
     if (updatedAfter) {

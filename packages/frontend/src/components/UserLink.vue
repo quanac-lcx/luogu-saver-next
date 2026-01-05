@@ -17,7 +17,12 @@ defineProps<{
             :src="`https://cdn.luogu.com.cn/upload/usericon/${user?.id || 3}.png`"
             style="margin-right: 8px"
         />
-        <a :href="`/user/${user?.id}`" class="user-name" :class="`user-${user?.color || 'Gray'}`" target="_blank">
+        <a
+            :href="`/user/${user?.id}`"
+            class="user-name"
+            :class="`user-${user?.color || 'Gray'}`"
+            target="_blank"
+        >
             {{ user?.name || '未知用户' }}
         </a>
     </div>

@@ -22,7 +22,11 @@ export const ARTICLE_CATEGORIES: Record<number, { label: string; icon: any; colo
     9: { label: '未知', icon: HelpCircleOutline, color: '#95a5a6' }
 };
 
-export const UNKNOWN_CATEGORY = { label: '未知分类', icon: HelpCircleOutline, color: '#95a5a6' };
+export const UNKNOWN_CATEGORY = {
+    label: '未知分类',
+    icon: HelpCircleOutline,
+    color: '#95a5a6'
+};
 
 export const THEME_STORAGE_KEY = 'ui_theme';
 export const CACHE_STORAGE_KEY = 'save_cache_';

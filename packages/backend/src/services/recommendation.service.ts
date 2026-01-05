@@ -20,13 +20,16 @@ export class RecommendationService {
         return similarIds.slice(0, count);
     }
 
-    private static async getNearestArticlesByProfile(profile: number[], count: number): Promise<string[]> {
+    private static async getNearestArticlesByProfile(
+        profile: number[],
+        count: number
+    ): Promise<string[]> {
         if (!profile) return [];
         const results = await VectorService.getNearestVectors(profile, count);
         return results.ids[0];
     }
 
-    private static async drawProfile(articles: string[], count: number): Promise<number[]> {
+    private static async drawProfile(articles: string[]): Promise<number[]> {
         const validItems: { id: string; vec: number[] }[] = [];
         for (const articleId of articles) {
             const vector = await VectorService.getVector(articleId);
@@ -65,7 +68,11 @@ export class RecommendationService {
             const key = `anon_behavior:${deviceId}`;
             const now = Date.now();
             await redisClient.zadd(key, now, articleId);
-            await redisClient.zremrangebyrank(key, 0, -config.recommendation.anonymous.maxCount - 1);
+            await redisClient.zremrangebyrank(
+                key,
+                0,
+                -config.recommendation.anonymous.maxCount - 1
+            );
             await redisClient.expire(key, config.recommendation.anonymous.expireTime);
         } catch (error) {
             logger.error({ error, deviceId, articleId }, `Failed to record anonymous behavior`);
@@ -82,7 +89,11 @@ export class RecommendationService {
             }
             if (entries.length > 0) {
                 await redisClient.zadd(key, ...entries);
-                await redisClient.zremrangebyrank(key, 0, -config.recommendation.anonymous.maxCount - 1);
+                await redisClient.zremrangebyrank(
+                    key,
+                    0,
+                    -config.recommendation.anonymous.maxCount - 1
+                );
                 await redisClient.expire(key, 3 * 60 * 60);
             }
         } catch (error) {
@@ -100,7 +111,9 @@ export class RecommendationService {
         }
     }
 
-    private static filterUselessFields(articles: RecommendedArticle[]): Partial<RecommendedArticle>[] {
+    private static filterUselessFields(
+        articles: RecommendedArticle[]
+    ): Partial<RecommendedArticle>[] {
         return articles.map((article: RecommendedArticle) => {
             return {
                 id: article.id,
@@ -117,16 +130,28 @@ export class RecommendationService {
 
     static async getAnonymousRecommendations(deviceId: string, count: number = 10) {
         const key = `anon_behavior:${deviceId}`;
-        const articleIds = await redisClient.zrevrange(key, 0, config.recommendation.anonymous.maxCount - 1);
-        const profile = await this.drawProfile(articleIds, config.recommendation.anonymous.maxCount);
+        const articleIds = await redisClient.zrevrange(
+            key,
+            0,
+            config.recommendation.anonymous.maxCount - 1
+        );
+        const profile = await this.drawProfile(articleIds);
         const vectorResults = await this.getNearestArticlesByProfile(profile, count * 5);
         const randomResults = (await ArticleService.getRandomArticles(20)).map(a => a.id);
         const hotResults = (await ArticleService.getArticlesOrderedByViewCount(50)).map(a => a.id);
         logger.debug(
-            { deviceId, vL: vectorResults.length, rL: randomResults.length, hL: hotResults.length },
+            {
+                deviceId,
+                vL: vectorResults.length,
+                rL: randomResults.length,
+                hL: hotResults.length
+            },
             `Anonymous recommendations`
         );
-        logger.debug({ deviceId, profile: profile?.slice(0, 5).map(v => v.toFixed(4)) }, `Profile vector`);
+        logger.debug(
+            { deviceId, profile: profile?.slice(0, 5).map(v => v.toFixed(4)) },
+            `Profile vector`
+        );
         logger.debug({ deviceId, articleIds }, `Read articles`);
         logger.debug({ deviceId, randomResults }, `Random articles`);
         logger.debug({ deviceId, hotResults }, `Hot articles`);
@@ -142,12 +167,25 @@ export class RecommendationService {
         const resultWithReason: RecommendedArticle[] = [];
         for (const article of result) {
             if (vectorResults.includes(article.id))
-                resultWithReason.push({ ...article, reason: 'vector' } as RecommendedArticle);
+                resultWithReason.push({
+                    ...article,
+                    reason: 'vector'
+                } as RecommendedArticle);
             else if (randomResults.includes(article.id))
-                resultWithReason.push({ ...article, reason: 'random' } as RecommendedArticle);
+                resultWithReason.push({
+                    ...article,
+                    reason: 'random'
+                } as RecommendedArticle);
             else if (hotResults.includes(article.id))
-                resultWithReason.push({ ...article, reason: 'hot' } as RecommendedArticle);
-            else resultWithReason.push({ ...article, reason: 'other' } as RecommendedArticle);
+                resultWithReason.push({
+                    ...article,
+                    reason: 'hot'
+                } as RecommendedArticle);
+            else
+                resultWithReason.push({
+                    ...article,
+                    reason: 'other'
+                } as RecommendedArticle);
         }
         return this.filterUselessFields(resultWithReason);
     }
@@ -169,7 +207,10 @@ export class RecommendationService {
                 if (article.id !== articleId) finalResult.push(article.id);
                 titleSimilarIds.push(article.id);
             }
-            logger.debug({ articleId: article.id, title: article.title, similarity }, `Title similarity check`);
+            logger.debug(
+                { articleId: article.id, title: article.title, similarity },
+                `Title similarity check`
+            );
         }
         let appendedCount = 1;
         for (const simId of similarIds) {
@@ -183,8 +224,15 @@ export class RecommendationService {
         const articlesWithReason: RecommendedArticle[] = [];
         for (const article of articles) {
             if (titleSimilarIds.includes(article.id))
-                articlesWithReason.push({ ...article, reason: 'title' } as RecommendedArticle);
-            else articlesWithReason.push({ ...article, reason: 'vector' } as RecommendedArticle);
+                articlesWithReason.push({
+                    ...article,
+                    reason: 'title'
+                } as RecommendedArticle);
+            else
+                articlesWithReason.push({
+                    ...article,
+                    reason: 'vector'
+                } as RecommendedArticle);
         }
         return this.filterUselessFields(articlesWithReason);
     }

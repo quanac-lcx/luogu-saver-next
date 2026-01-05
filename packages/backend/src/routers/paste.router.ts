@@ -19,7 +19,7 @@ router.get('/query/:id', async (ctx: Context) => {
         } else {
             ctx.success(paste);
         }
-    } catch (error) {
+    } catch {
         ctx.fail(500, 'Failed to retrieve paste');
     }
 });
@@ -28,7 +28,7 @@ router.get('/count', async (ctx: Context) => {
     try {
         const count = await PasteService.getPasteCount();
         ctx.success({ count });
-    } catch (error) {
+    } catch {
         ctx.fail(500, 'Failed to retrieve paste count');
     }
 });

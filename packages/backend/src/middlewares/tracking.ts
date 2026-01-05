@@ -12,7 +12,9 @@ export const trackingMiddleware = async (ctx: Context, next: Next) => {
                 if (event === TrackingEvent.VIEW_ARTICLE) {
                     const deviceId = ctx.headers['x-device-id'] as string;
                     const articleId = data;
-                    logger.debug(`Tracking anonymous VIEW_ARTICLE: deviceId=${deviceId}, articleId=${articleId}`);
+                    logger.debug(
+                        `Tracking anonymous VIEW_ARTICLE: deviceId=${deviceId}, articleId=${articleId}`
+                    );
                     if (deviceId && articleId) {
                         await RecommendationService.recordAnonymousBehavior(deviceId, articleId);
                     }

@@ -9,7 +9,7 @@ export function Cacheable<T>(
     keyGenerator: (...args: any[]) => string,
     EntityClass?: ClassConstructor<T>
 ): MethodDecorator {
-    return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
+    return function (target: object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
         const originalMethod = descriptor.value;
         descriptor.value = async function (...args: any[]) {
             const cacheKey = keyGenerator(...args);
@@ -27,7 +27,9 @@ export function Cacheable<T>(
             }
             const result = await originalMethod.apply(this, args);
             if (result) {
-                redisClient.set(cacheKey, JSON.stringify(result), 'EX', ttlSeconds).catch(console.error);
+                redisClient
+                    .set(cacheKey, JSON.stringify(result), 'EX', ttlSeconds)
+                    .catch(console.error);
             }
             return result;
         };

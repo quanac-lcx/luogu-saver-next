@@ -4,9 +4,9 @@
     </template>
 
     <template v-else>
-        <slot name="skeleton" v-if="$slots.skeleton" />
+        <slot v-if="$slots.skeleton" name="skeleton" />
 
-        <n-space vertical v-else>
+        <n-space v-else vertical>
             <n-skeleton text :repeat="2" />
             <n-skeleton text style="width: 60%" />
         </n-space>
@@ -20,7 +20,7 @@ import { NSkeleton, NSpace } from 'naive-ui';
 defineProps({
     loading: {
         type: Boolean,
-        required: true,
+        required: false,
         default: true
     }
 });

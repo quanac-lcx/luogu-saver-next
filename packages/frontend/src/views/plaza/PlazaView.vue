@@ -2,7 +2,12 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { NSpin, NDivider, NButton, NIcon, NEmpty, NTag } from 'naive-ui';
-import { NewspaperOutline, ArrowForwardOutline, SparklesOutline, GlobeOutline } from '@vicons/ionicons5';
+import {
+    NewspaperOutline,
+    ArrowForwardOutline,
+    SparklesOutline,
+    GlobeOutline
+} from '@vicons/ionicons5';
 import { FireAlt } from '@vicons/fa';
 
 import { getRecommendations } from '@/api/recommendation';
@@ -104,7 +109,9 @@ const goToDetail = (id: string) => {
 </script>
 
 <template>
-    <CardTitle title="文章广场" :icon="GlobeOutline" class="feed-header"> ARTICLE PLAZA! </CardTitle>
+    <CardTitle title="文章广场" :icon="GlobeOutline" class="feed-header">
+        ARTICLE PLAZA!
+    </CardTitle>
 
     <div class="article-list">
         <div v-for="article in articles" :key="article.id" class="article-item">
@@ -117,7 +124,11 @@ const goToDetail = (id: string) => {
                 <template #title-extra>
                     <n-tag
                         v-if="article.reason === 'hot'"
-                        :color="{ textColor: '#ff6200', color: 'rgba(255, 98, 0, 0.2)', borderColor: '#ff6200' }"
+                        :color="{
+                            textColor: '#ff6200',
+                            color: 'rgba(255, 98, 0, 0.2)',
+                            borderColor: '#ff6200'
+                        }"
                         size="small"
                     >
                         <template #icon>
@@ -127,7 +138,11 @@ const goToDetail = (id: string) => {
                     </n-tag>
                     <n-tag
                         v-else-if="article.reason === 'vector'"
-                        :color="{ textColor: '#00aaff', color: 'rgba(0, 170, 255, 0.2)', borderColor: '#00aaff' }"
+                        :color="{
+                            textColor: '#00aaff',
+                            color: 'rgba(0, 170, 255, 0.2)',
+                            borderColor: '#00aaff'
+                        }"
                         size="small"
                     >
                         <template #icon>
@@ -159,7 +174,12 @@ const goToDetail = (id: string) => {
                         </n-tag>
                     </div>
                     <div class="right">
-                        <n-button text size="small" type="primary" @click.stop="goToDetail(article.id)">
+                        <n-button
+                            text
+                            size="small"
+                            type="primary"
+                            @click.stop="goToDetail(article.id)"
+                        >
                             阅读全文
                             <n-icon :component="ArrowForwardOutline" style="margin-left: 4px" />
                         </n-button>
@@ -177,7 +197,7 @@ const goToDetail = (id: string) => {
 
         <div v-else-if="error" class="error-state">
             <span style="color: #d03050">加载失败</span>
-            <n-button size="small" @click="loadMore" style="margin-left: 10px">重试</n-button>
+            <n-button size="small" style="margin-left: 10px" @click="loadMore">重试</n-button>
         </div>
 
         <n-empty v-else-if="noMore && everReturned" description="没有更多推荐了（你是真能看啊）" />

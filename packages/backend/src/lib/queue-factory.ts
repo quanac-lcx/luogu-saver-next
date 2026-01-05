@@ -23,7 +23,7 @@ export function getQueueByType<T extends TaskType>(type: T): TypedQueue<TaskDefi
 export async function closeAllQueues() {
     logger.info(`Closing ${queuePool.size} active queues...`);
     const closePromises = [];
-    for (const [name, wrapper] of queuePool.entries()) {
+    for (const wrapper of queuePool.values()) {
         closePromises.push(wrapper.close());
     }
     await Promise.all(closePromises);

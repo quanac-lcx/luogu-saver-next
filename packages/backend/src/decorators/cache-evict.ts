@@ -2,7 +2,7 @@ import { redisClient } from '@/lib/redis';
 import { logger } from '@/lib/logger';
 
 export function CacheEvict(keyGenerator: (...args: any[]) => string | string[]): MethodDecorator {
-    return function (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
+    return function (target: object, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
         const originalMethod = descriptor.value;
         descriptor.value = async function (...args: any[]) {
             const result = await originalMethod.apply(this, args);

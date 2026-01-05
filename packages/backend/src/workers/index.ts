@@ -17,9 +17,14 @@ export function bootstrap() {
     saveProcessor.registerHandler(new ArticleHandler());
     saveProcessor.registerHandler(new PasteHandler());
 
-    const saveWorkerHost = new WorkerHost<SaveTask>(QUEUE_NAMES[TaskType.SAVE], saveProcessor, saveTaskPointGuard, {
-        concurrency: config.queue.concurrencyLimit
-    } as WorkerOptions);
+    const saveWorkerHost = new WorkerHost<SaveTask>(
+        QUEUE_NAMES[TaskType.SAVE],
+        saveProcessor,
+        saveTaskPointGuard,
+        {
+            concurrency: config.queue.concurrencyLimit
+        } as WorkerOptions
+    );
 
     process.on('SIGINT', async () => {
         console.log('Shutting down workers...');

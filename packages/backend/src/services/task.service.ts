@@ -1,6 +1,5 @@
 import { Task } from '@/entities/task';
-import { TaskStatus, TaskType, SaveTarget, CommonTask } from '@/shared/task';
-import { logger } from '@/lib/logger';
+import { TaskStatus, TaskType } from '@/shared/task';
 import { getQueueByType } from '@/lib/queue-factory';
 import { getRandomString } from '@/utils/string';
 

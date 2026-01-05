@@ -70,7 +70,9 @@ async function handleLegacyC3VK(
         const m = response.data.match(/C3VK=([a-zA-Z0-9]+);/);
         if (m) {
             const c3vkValue = m[1];
-            const newCookie = headers['Cookie'] ? `${headers['Cookie']}; C3VK=${c3vkValue}` : `C3VK=${c3vkValue}`;
+            const newCookie = headers['Cookie']
+                ? `${headers['Cookie']}; C3VK=${c3vkValue}`
+                : `C3VK=${c3vkValue}`;
             const newHeaders = { ...headers, Cookie: newCookie };
             logger.debug({ url, c3vk: c3vkValue }, 'Detected Legacy C3VK token, retrying request');
             return await axios.get(url, {
@@ -90,7 +92,11 @@ async function handleLegacyC3VK(
  * @param cookie Cookie object
  * @returns Page content as string
  */
-export async function fetch(url: string, mode: C3vkMode, cookie?: Record<string, string>): Promise<any> {
+export async function fetch(
+    url: string,
+    mode: C3vkMode,
+    cookie?: Record<string, string>
+): Promise<any> {
     const timeout = config.network.timeout;
 
     const headers: Record<string, string> = {
@@ -152,7 +158,7 @@ export async function fetch(url: string, mode: C3vkMode, cookie?: Record<string,
     const data = resp.data;
     try {
         return typeof data === 'string' ? JSON.parse(data) : data;
-    } catch (err) {
+    } catch {
         throw new UnrecoverableError('Failed to parse response JSON');
     }
 }

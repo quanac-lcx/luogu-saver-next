@@ -42,10 +42,14 @@ function findConfigPath(): string {
                 logger.debug(`Config file found at ${p}`);
                 return p;
             }
-        } catch {}
+        } catch (err) {
+            logger.debug({ err, path: p }, 'Failed to find config file at path');
+        }
     }
 
-    throw new Error('Oh my baby god, where is the config file? Searched at: \n' + Array.from(seen).join('\n'));
+    throw new Error(
+        'Oh my baby god, where is the config file? Searched at: \n' + Array.from(seen).join('\n')
+    );
 }
 
 const CONFIG_PATH = findConfigPath();

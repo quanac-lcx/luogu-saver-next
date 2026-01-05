@@ -33,7 +33,12 @@ import { useContentSaver } from '@/composables/useContentSaver';
 import { getArticleById, getRelevant, getArticleHistory, saveArticle } from '@/api/article';
 import type { Article, PlazaArticle, TocItem } from '@/types/article';
 import { hexToRgba } from '@/utils/render.ts';
-import { getCategoryLabel, getCategoryColor, getCategoryIcon, generateTocAndProcessHtml } from '@/utils/article';
+import {
+    getCategoryLabel,
+    getCategoryColor,
+    getCategoryIcon,
+    generateTocAndProcessHtml
+} from '@/utils/article';
 
 import Card from '@/components/Card.vue';
 import SidebarWidget from '@/components/SidebarWidget.vue';
@@ -43,7 +48,7 @@ import LoadingSkeleton from '@/components/LoadingSkeleton.vue';
 import { ARTICLE_CATEGORIES, CACHE_STORAGE_KEY, UNKNOWN_CATEGORY } from '@/utils/constants';
 import { formatDate } from '@/utils/render';
 
-import { useLocalStorage } from "@/composables/useLocalStorage.ts";
+import { useLocalStorage } from '@/composables/useLocalStorage.ts';
 
 const route = useRoute();
 const router = useRouter();
@@ -72,11 +77,11 @@ const triggerRefresh = () => {
 };
 
 const lastUpdate = useLocalStorage(CACHE_STORAGE_KEY + `_article_${articleId}_updated_at`, 0);
-if ((Date.now() - lastUpdate.value) > 60 * 60 * 1000) {
-	// Request update automatically if last update was more than 1 hour ago
-	console.log('Auto update triggered for article', articleId);
-	saveArticle(articleId);
-	lastUpdate.value = Date.now();
+if (Date.now() - lastUpdate.value > 60 * 60 * 1000) {
+    // Request update automatically if last update was more than 1 hour ago
+    console.log('Auto update triggered for article', articleId);
+    saveArticle(articleId);
+    lastUpdate.value = Date.now();
 }
 
 const loadRelevant = async () => {
@@ -149,7 +154,7 @@ const handleCopy = async () => {
         try {
             await navigator.clipboard.writeText(article.value.content);
             message.success('源码已复制到剪贴板');
-        } catch (err) {
+        } catch {
             message.error('复制失败');
         }
     }
@@ -185,7 +190,12 @@ onMounted(() => {
     <n-spin :show="isSaving" description="正在保存并处理..." class="saving-spin">
         <n-grid :x-gap="16" cols="1 l:8" responsive="screen">
             <n-gi :span="1" class="sidebar-left">
-                <SidebarWidget title="目录" :icon="ListOutline" class="toc-card" v-if="tocItems.length > 0">
+                <SidebarWidget
+                    v-if="tocItems.length > 0"
+                    title="目录"
+                    :icon="ListOutline"
+                    class="toc-card"
+                >
                     <n-anchor :show-rail="true" :show-background="true" type="block" :bound="100">
                         <template v-for="item in tocItems" :key="item.href">
                             <n-anchor-link :title="item.title" :href="item.href">
@@ -206,14 +216,24 @@ onMounted(() => {
                     <template #skeleton>
                         <Card>
                             <div style="margin-bottom: 8px">
-                                <n-skeleton text style="width: 40%; height: 28px; margin-bottom: 8px" />
+                                <n-skeleton
+                                    text
+                                    style="width: 40%; height: 28px; margin-bottom: 8px"
+                                />
                             </div>
                             <n-divider style="margin: 12px 0" />
                             <n-grid x-gap="12" cols="1 s:2">
                                 <n-gi>
                                     <div class="info-item">
                                         <span class="label">作者</span>
-                                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px">
+                                        <div
+                                            style="
+                                                display: flex;
+                                                align-items: center;
+                                                gap: 8px;
+                                                margin-top: 4px;
+                                            "
+                                        >
                                             <n-skeleton circle size="small" />
                                             <n-skeleton text style="width: 80px" />
                                         </div>
@@ -222,7 +242,14 @@ onMounted(() => {
                                 <n-gi>
                                     <div class="info-item">
                                         <span class="label">分类</span>
-                                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px">
+                                        <div
+                                            style="
+                                                display: flex;
+                                                align-items: center;
+                                                gap: 8px;
+                                                margin-top: 4px;
+                                            "
+                                        >
                                             <n-skeleton width="18px" height="18px" />
                                             <n-skeleton text style="width: 60px" />
                                         </div>
@@ -256,10 +283,16 @@ onMounted(() => {
                                     <div class="info-item">
                                         <span class="label">分类</span>
                                         <div class="category-link">
-                                            <NIcon :component="currentCategory.icon" :color="currentCategory.color" />
-                                            <span :style="{ color: currentCategory.color }">{{
-                                                currentCategory.label
-                                            }}</span>
+                                            <NIcon
+                                                :component="currentCategory.icon"
+                                                :color="currentCategory.color"
+                                            />
+                                            <span
+                                                :style="{
+                                                    color: currentCategory.color
+                                                }"
+                                                >{{ currentCategory.label }}</span
+                                            >
                                         </div>
                                     </div>
                                 </n-gi>
@@ -344,7 +377,7 @@ onMounted(() => {
                             </Card>
                         </template>
 
-                        <Card title="相关推荐" v-if="recommended.length">
+                        <Card v-if="recommended.length" title="相关推荐">
                             <div class="article-list">
                                 <div v-for="it in recommended" :key="it.id" class="article-item">
                                     <Card
@@ -390,14 +423,21 @@ onMounted(() => {
                                                 <n-tag
                                                     :color="{
                                                         textColor: getCategoryColor(it.category),
-                                                        color: hexToRgba(getCategoryColor(it.category), 0.2),
+                                                        color: hexToRgba(
+                                                            getCategoryColor(it.category),
+                                                            0.2
+                                                        ),
                                                         borderColor: getCategoryColor(it.category)
                                                     }"
                                                     size="small"
                                                     style="margin-left: 8px"
                                                 >
                                                     <template #icon>
-                                                        <n-icon :component="getCategoryIcon(it.category)" />
+                                                        <n-icon
+                                                            :component="
+                                                                getCategoryIcon(it.category)
+                                                            "
+                                                        />
                                                     </template>
                                                     {{ getCategoryLabel(it.category) }}
                                                 </n-tag>
@@ -421,7 +461,7 @@ onMounted(() => {
                 </div>
             </n-gi>
 
-            <n-gi :span="1" class="sidebar-right" v-if="versionHistory.length > 0">
+            <n-gi v-if="versionHistory.length > 0" :span="1" class="sidebar-right">
                 <SidebarWidget title="历史版本" :icon="TimeOutline" class="version-card">
                     <n-timeline>
                         <n-timeline-item
@@ -430,7 +470,9 @@ onMounted(() => {
                             :title="`版本 ${ver.version}`"
                             :content="ver.title"
                             :time="ver.createdAt"
-                            :type="ver.version === versionHistory[0]?.version ? 'success' : 'default'"
+                            :type="
+                                ver.version === versionHistory[0]?.version ? 'success' : 'default'
+                            "
                         />
                     </n-timeline>
                 </SidebarWidget>
@@ -439,7 +481,7 @@ onMounted(() => {
     </n-spin>
 
     <div v-if="hasUpdate" class="update-floater">
-        <n-button type="primary" circle size="large" @click="triggerRefresh" class="shadow-button">
+        <n-button type="primary" circle size="large" class="shadow-button" @click="triggerRefresh">
             <template #icon>
                 <NIcon :component="SyncOutline" />
             </template>

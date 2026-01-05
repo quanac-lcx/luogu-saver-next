@@ -4,7 +4,6 @@ import { C3vkMode } from '@/shared/c3vk';
 import type { Paste as LuoguPaste, DataResponse } from '@/types/luogu-api';
 import { PasteService } from '@/services/paste.service';
 import { Paste } from '@/entities/paste';
-import { logger } from '@/lib/logger';
 import { buildUser } from '@/utils/luogu-api';
 import { User } from '@/entities/user';
 import { UserService } from '@/services/user.service';

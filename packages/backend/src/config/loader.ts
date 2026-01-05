@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 import yaml from 'js-yaml';
 import { z } from 'zod';
 import { AppConfigSchema, type AppConfig } from './schemas';
@@ -16,7 +15,9 @@ export class ConfigLoader {
         }
 
         if (!fs.existsSync(this.configPath)) {
-            logger.warn(`Configuration file not found at ${this.configPath}, using default configuration.`);
+            logger.warn(
+                `Configuration file not found at ${this.configPath}, using default configuration.`
+            );
             this.config = AppConfigSchema.parse({});
             return this.config;
         }

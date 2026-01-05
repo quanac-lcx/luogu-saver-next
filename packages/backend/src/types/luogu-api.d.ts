@@ -320,7 +320,9 @@ export interface ConfigResponse {
         [id: number]: { id: number; type: string; name: string };
     };
     imageHostingWatermarkTypes: { id: number; name: string }[];
-    teamMemberTypes: { [id: number]: { id: number; type: string; name: string } };
+    teamMemberTypes: {
+        [id: number]: { id: number; type: string; name: string };
+    };
     teamMemberPermissionTypes: {
         [id: number]: { id: number; type: string; name: string };
     };
@@ -359,7 +361,9 @@ export interface ConfigResponse {
         invitation: boolean;
     }[];
     ImageHostingWatermarkStyle: { type: string; id: number }[];
-    OpenIdPlatform: { [id: number]: { type: string; id: number; name: string } };
+    OpenIdPlatform: {
+        [id: number]: { type: string; id: number; name: string };
+    };
     ProblemDifficulty: {
         type: string;
         id: number;
@@ -396,7 +400,9 @@ export interface ConfigResponse {
     SendEndpoint: { [id: number]: { type: string; id: number } };
     TeamJoinOpenness: { type: string; id: number; name: string }[];
     TeamJoinRequestStatus: { type: string; id: number; name: string }[];
-    TeamMemberType: { [id: number]: { type: string; id: number; name: string } };
+    TeamMemberType: {
+        [id: number]: { type: string; id: number; name: string };
+    };
     TeamType: { [id: number]: { type: string; id: number; name: string } };
     TicketActionType: { [id: string]: { type: string; id: string } };
     TicketStatus: {
@@ -1009,7 +1015,7 @@ export interface SelfSummary {
     verified: boolean;
 }
 
-export interface Self extends SelfSummary {}
+// export interface Self extends SelfSummary {}
 
 export interface SelfDetails extends Self {
     organization: null; // TODO
@@ -1374,7 +1380,7 @@ export interface LegacyBlog {
     Type: string;
     PostTime: number;
     // deno-lint-ignore ban-types
-    Author: {};
+    Author: object;
     Status: number;
     ContentDescription: string;
     ThumbUp: number;

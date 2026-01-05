@@ -30,26 +30,26 @@
 }
 
 :root {
-	--shiki-light: initial;
-	--shiki-dark: initial;
-	--shiki-light-bg: initial;
-	--shiki-dark-bg: initial;
+    --shiki-light: initial;
+    --shiki-dark: initial;
+    --shiki-light-bg: initial;
+    --shiki-dark-bg: initial;
 
-	--shiki-light-font-weight: initial;
-	--shiki-dark-font-weight: initial;
-	--shiki-light-font-style: initial;
-	--shiki-dark-font-style: initial;
-	--shiki-light-text-decoration: initial;
-	--shiki-dark-text-decoration: initial;
+    --shiki-light-font-weight: initial;
+    --shiki-dark-font-weight: initial;
+    --shiki-light-font-style: initial;
+    --shiki-dark-font-style: initial;
+    --shiki-light-text-decoration: initial;
+    --shiki-dark-text-decoration: initial;
 }
 
 .shiki,
 .shiki span {
-	color: var(--shiki-light);
-	/*background-color: var(--shiki-light-bg);*/
-	font-style: var(--shiki-light-font-style);
-	font-weight: var(--shiki-light-font-weight);
-	text-decoration: var(--shiki-light-text-decoration);
+    color: var(--shiki-light);
+    /*background-color: var(--shiki-light-bg);*/
+    font-style: var(--shiki-light-font-style);
+    font-weight: var(--shiki-light-font-weight);
+    text-decoration: var(--shiki-light-text-decoration);
 }
 
 /*

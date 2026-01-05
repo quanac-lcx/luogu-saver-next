@@ -6,8 +6,8 @@ import { AnalyticsOutline } from '@vicons/ionicons5';
 const show = ref(false);
 
 import { CONSENT_TRACKING_STORAGE_KEY } from '@/utils/constants.ts';
-import { useLocalStorage } from "@/composables/useLocalStorage.ts";
-const trackingStorage = useLocalStorage(CONSENT_TRACKING_STORAGE_KEY, false)
+import { useLocalStorage } from '@/composables/useLocalStorage.ts';
+const trackingStorage = useLocalStorage(CONSENT_TRACKING_STORAGE_KEY, false);
 
 onMounted(() => {
     const consent = trackingStorage.value;
@@ -19,12 +19,12 @@ onMounted(() => {
 });
 
 const handleAccept = () => {
-	trackingStorage.value = true;
+    trackingStorage.value = true;
     show.value = false;
 };
 
 const handleReject = () => {
-	trackingStorage.value = false;
+    trackingStorage.value = false;
     show.value = false;
 };
 </script>

@@ -1,7 +1,7 @@
 import type { SaveTask, TaskHandler } from '@/shared/task';
 import { fetch } from '@/utils/fetch';
 import { C3vkMode } from '@/shared/c3vk';
-import type { ArticleData, LentilleDataResponse, UserSummary } from '@/types/luogu-api';
+import type { ArticleData, LentilleDataResponse } from '@/types/luogu-api';
 import { createHash } from 'crypto';
 import { ArticleService } from '@/services/article.service';
 import { ArticleHistoryService } from '@/services/article-history.service';

@@ -15,7 +15,10 @@ router.get('/get', async (ctx: Context) => {
     } else {
         const deviceId = ctx.headers['x-device-id'] as string;
         if (deviceId) {
-            recommendations = await RecommendationService.getAnonymousRecommendations(deviceId, count);
+            recommendations = await RecommendationService.getAnonymousRecommendations(
+                deviceId,
+                count
+            );
         }
     }
     ctx.success(recommendations);

@@ -9,10 +9,18 @@ export class VectorService {
     private static async getCollection(): Promise<Collection> {
         if (!this._collection) {
             try {
-                this._collection = await ChromaDataSource.getCollection({ name: config.chroma.collectionName });
-                logger.info({ collection: config.chroma.collectionName }, 'Chroma collection loaded successfully');
+                this._collection = await ChromaDataSource.getCollection({
+                    name: config.chroma.collectionName
+                });
+                logger.info(
+                    { collection: config.chroma.collectionName },
+                    'Chroma collection loaded successfully'
+                );
             } catch (error) {
-                logger.error({ error, collection: config.chroma.collectionName }, 'Failed to get Chroma collection');
+                logger.error(
+                    { error, collection: config.chroma.collectionName },
+                    'Failed to get Chroma collection'
+                );
             }
         }
         if (!this._collection) {
@@ -25,7 +33,10 @@ export class VectorService {
         if (!config.chroma.enable) return [];
         const collection = await this.getCollection();
         try {
-            const targetData = await collection.get({ ids: [articleId], include: ['embeddings'] });
+            const targetData = await collection.get({
+                ids: [articleId],
+                include: ['embeddings']
+            });
             if (!targetData || targetData.ids.length === 0) {
                 return null;
             }

@@ -32,23 +32,25 @@ const handleSearch = () => {
                 <div class="logo-placeholder">
                     <n-icon size="48" :color="themeVars.primaryColor" :component="LuoguLogo" />
                 </div>
-                <h1 class="hero-title"><span :style="{ color: themeVars.primaryColor }">洛谷</span>保存站</h1>
+                <h1 class="hero-title">
+                    <span :style="{ color: themeVars.primaryColor }">洛谷</span>保存站
+                </h1>
             </div>
             <p class="hero-subtitle">Save everything, keep it alive.</p>
 
             <div class="hero-search">
                 <n-input
+                    v-model:value="searchText"
                     class="mac-input"
                     size="large"
                     placeholder="输入链接/文章标题或关键词/uid 查看"
-                    v-model:value="searchText"
                     @keydown.enter="handleSearch"
                 >
                     <template #prefix>
                         <n-icon :component="Search" class="search-icon" />
                     </template>
                     <template #suffix>
-                        <n-button circle type="primary" @click="handleSearch" class="search-button">
+                        <n-button circle type="primary" class="search-button" @click="handleSearch">
                             <template #icon>
                                 <n-icon :component="ArrowForward" />
                             </template>
@@ -95,7 +97,8 @@ const handleSearch = () => {
     margin: 0;
     line-height: 1.1;
     letter-spacing: -0.02em;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family:
+        -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .hero-subtitle {

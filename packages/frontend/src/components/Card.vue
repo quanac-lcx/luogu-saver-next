@@ -8,7 +8,8 @@ const slots = useSlots();
 
 const props = defineProps({
     title: {
-        type: String
+        type: String,
+        default: null
     },
     icon: {
         type: Object as () => Component,
@@ -49,10 +50,21 @@ const showHeader = computed(() => {
 
 <template>
     <div class="saver-card" :class="{ 'is-hoverable': hoverable }" :style="cardStyle">
-        <div class="card-header" v-if="showHeader">
+        <div v-if="showHeader" class="card-header">
             <div class="card-title-wrapper">
-                <n-icon v-if="icon" :component="icon" :color="effectiveIconColor" size="24" :depth="1" />
-                <span v-if="title" class="card-title" :style="{ color: themeVars.cardTitleColor }">{{ title }}</span>
+                <n-icon
+                    v-if="icon"
+                    :component="icon"
+                    :color="effectiveIconColor"
+                    size="24"
+                    :depth="1"
+                />
+                <span
+                    v-if="title"
+                    class="card-title"
+                    :style="{ color: themeVars.cardTitleColor }"
+                    >{{ title }}</span
+                >
                 <slot name="title-extra" />
             </div>
             <div class="card-extra">

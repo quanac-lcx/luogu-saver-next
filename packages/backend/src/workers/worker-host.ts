@@ -1,4 +1,11 @@
-import { RateLimitError, Worker, Job, QueueEvents, type WorkerOptions, UnrecoverableError } from 'bullmq';
+import {
+    RateLimitError,
+    Worker,
+    Job,
+    QueueEvents,
+    type WorkerOptions,
+    UnrecoverableError
+} from 'bullmq';
 import { type CommonTask, TaskStatus } from '@/shared/task';
 import { TaskProcessor } from './task-processor';
 import { PointGuard } from '@/lib/point-guard';
@@ -50,9 +57,13 @@ export class WorkerHost<T extends CommonTask> {
             }
         });
 
-        this.worker.on('completed', async (job, returnvalue) => {
+        this.worker.on('completed', async job => {
             logger.info({ jobId: job.id }, 'Job completed successfully.');
-            await TaskService.updateTask(job.id!, TaskStatus.COMPLETED, 'Task completed successfully');
+            await TaskService.updateTask(
+                job.id!,
+                TaskStatus.COMPLETED,
+                'Task completed successfully'
+            );
         });
 
         this.worker.on('failed', async (job, err) => {
@@ -62,13 +73,17 @@ export class WorkerHost<T extends CommonTask> {
                 logger.error({ jobId: job?.id, err }, 'Job failed PERMANENTLY.');
                 if (job?.id) await TaskService.updateTask(job.id, TaskStatus.FAILED, err.message);
             } else {
-                logger.warn({ jobId: job?.id, attempt: job?.attemptsMade, err }, 'Job failed, retrying...');
+                logger.warn(
+                    { jobId: job?.id, attempt: job?.attemptsMade, err },
+                    'Job failed, retrying...'
+                );
             }
         });
 
         this.worker.on('active', async job => {
             logger.debug({ job: job?.data }, 'Job is now active.');
-            if (job?.id) await TaskService.updateTask(job.id, TaskStatus.PROCESSING, 'Task is now active');
+            if (job?.id)
+                await TaskService.updateTask(job.id, TaskStatus.PROCESSING, 'Task is now active');
         });
 
         this.worker.on('error', err => {
@@ -77,7 +92,8 @@ export class WorkerHost<T extends CommonTask> {
 
         this.worker.on('progress', async (job, progress) => {
             logger.debug({ jobId: job?.id, progress }, 'Job progress update.');
-            if (job?.id) await TaskService.updateTask(job.id, TaskStatus.PROCESSING, progress as string);
+            if (job?.id)
+                await TaskService.updateTask(job.id, TaskStatus.PROCESSING, progress as string);
         });
 
         queueEvents.on('delayed', (job: { jobId: string; delay: number }) => {

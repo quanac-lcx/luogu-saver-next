@@ -16,9 +16,26 @@
                         @mouseenter="handleMouseEnter"
                         @mouseleave="handleMouseLeave"
                     >
-                        <div style="height: 64px; display: flex; align-items: center; justify-content: center">
-                            <img v-if="!collapsed" src="/logo-text.png" alt="洛谷保存站" style="height: 32px" />
-                            <img v-else src="/logo-icon.png" alt="洛谷保存站" style="height: 32px" />
+                        <div
+                            style="
+                                height: 64px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            "
+                        >
+                            <img
+                                v-if="!collapsed"
+                                src="/logo-text.png"
+                                alt="洛谷保存站"
+                                style="height: 32px"
+                            />
+                            <img
+                                v-else
+                                src="/logo-icon.png"
+                                alt="洛谷保存站"
+                                style="height: 32px"
+                            />
                         </div>
 
                         <n-menu
@@ -26,9 +43,9 @@
                             :collapsed="collapsed"
                             :collapsed-width="64"
                             :options="menuOptions"
-                            @update:value="handleMenuSelect"
                             :responsive="true"
                             :accordion="true"
+                            @update:value="handleMenuSelect"
                         />
                     </n-layout-sider>
 
@@ -41,7 +58,10 @@
                                 </div>
 
                                 <IconConfigProvider size="14">
-                                    <n-layout-footer bordered style="margin-top: 24px; padding: 10px 40px">
+                                    <n-layout-footer
+                                        bordered
+                                        style="margin-top: 24px; padding: 10px 40px"
+                                    >
                                         <n-grid cols="2">
                                             <n-gi>
                                                 <p class="footer-element">
@@ -60,13 +80,19 @@
                                                         </Icon>
                                                         <span> GitHub </span>
                                                     </a>
-                                                    <a href="https://help.luogu.me" class="footer-link">
+                                                    <a
+                                                        href="https://help.luogu.me"
+                                                        class="footer-link"
+                                                    >
                                                         <Icon>
                                                             <Book />
                                                         </Icon>
                                                         <span> 帮助文档 </span>
                                                     </a>
-                                                    <a href="https://help.luogu.me/docs/update" class="footer-link">
+                                                    <a
+                                                        href="https://help.luogu.me/docs/update"
+                                                        class="footer-link"
+                                                    >
                                                         <Icon>
                                                             <History />
                                                         </Icon>
@@ -77,7 +103,10 @@
                                                     <Icon>
                                                         <Clock />
                                                     </Icon>
-                                                    <span> 本网站已运行 {{ timeSinceFound }} 秒 </span>
+                                                    <span>
+                                                        本网站已运行
+                                                        {{ timeSinceFound }} 秒
+                                                    </span>
                                                 </p>
                                                 <p class="footer-element">
                                                     <a
@@ -94,7 +123,9 @@
                                             <n-gi>
                                                 <p class="footer-element right-aligned">
                                                     <Icon><Code /></Icon>
-                                                    <span> 开发者：Federico2903 & Murasame & quanac-lcx </span>
+                                                    <span>
+                                                        开发者：Federico2903 & Murasame & quanac-lcx
+                                                    </span>
                                                 </p>
                                                 <p class="footer-element right-aligned">
                                                     <a
@@ -105,7 +136,9 @@
                                                         <Icon>
                                                             <Qq />
                                                         </Icon>
-                                                        <span>洛谷保存站用户群：1017248143（点击加入）</span>
+                                                        <span
+                                                            >洛谷保存站用户群：1017248143（点击加入）</span
+                                                        >
                                                     </a>
                                                 </p>
                                                 <p class="footer-element right-aligned">
@@ -222,7 +255,9 @@ import TrackingConsent from '@/components/TrackingConsent.vue';
 const router = useRouter();
 const route = useRoute();
 
-const activeKey = computed(() => (route.meta.activeMenu as string) || (route.path as string).slice(1));
+const activeKey = computed(
+    () => (route.meta.activeMenu as string) || (route.path as string).slice(1)
+);
 const collapsed = ref(true);
 const manualToggle = ref(false);
 
@@ -331,7 +366,7 @@ const menuOptions: MenuOption[] = [
 ];
 
 import { THEME_STORAGE_KEY } from '@/utils/constants.ts';
-import { useLocalStorage } from "@/composables/useLocalStorage.ts";
+import { useLocalStorage } from '@/composables/useLocalStorage.ts';
 const themeStorage = useLocalStorage(THEME_STORAGE_KEY, defaultTheme);
 const uiThemeVars = ref<UiThemeVars>(themeStorage.value);
 

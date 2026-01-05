@@ -1,31 +1,41 @@
 {
-	"name": "luogu-saver-next",
-	"version": "1.0.0",
-	"private": true,
-	"license": "AGPL-3.0-or-later",
-	"workspaces": [
-		"packages/*"
-	],
-	"scripts": {
-		"dev": "concurrently -n \"FRONT,BACK\" -c \"green,blue\" \"npm run dev -w @luogu-saver-next/frontend\" \"npm run dev -w @luogu-saver-next/backend\"",
-		"build": "npm run build --workspaces",
-		"lint": "prettier --check .",
-		"format": "prettier --write .",
-		"test": "echo \"No tests yet!\"",
-		"prepare": "husky"
-	},
-	"devDependencies": {
-		"@types/node": "^24.10.0",
-		"concurrently": "^9.2.1",
-		"cross-env": "^10.1.0",
-		"husky": "^9.1.7",
-		"lint-staged": "^16.2.7",
-		"prettier": "^3.7.4",
-		"typescript": "~5.9.3"
-	},
-	"lint-staged": {
-		"*.{ts,tsx,js,json,md,vue,yml}": [
-			"prettier --write"
-		]
-	}
+    "name": "luogu-saver-next",
+    "version": "1.0.0",
+    "private": true,
+    "license": "AGPL-3.0-or-later",
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "dev": "concurrently -n \"FRONT,BACK\" -c \"green,blue\" \"npm run dev -w @luogu-saver-next/frontend\" \"npm run dev -w @luogu-saver-next/backend\"",
+        "build": "npm run build --workspaces",
+        "lint:prettier": "prettier --check .",
+        "lint:eslint": "eslint .",
+        "format:eslint": "eslint . --fix",
+        "format:prettier": "prettier --write .",
+        "test": "echo \"No tests yet!\"",
+        "prepare": "husky"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.39.2",
+        "@types/node": "^24.10.0",
+        "concurrently": "^9.2.1",
+        "cross-env": "^10.1.0",
+        "eslint": "^9.39.2",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.4",
+        "eslint-plugin-vue": "^10.6.2",
+        "globals": "^17.0.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^16.2.7",
+        "prettier": "^3.7.4",
+        "typescript": "~5.9.3",
+        "typescript-eslint": "^8.51.0"
+    },
+    "lint-staged": {
+        "*.{ts,tsx,js,json,md,vue,yml}": [
+            "prettier --write",
+            "eslint --fix"
+        ]
+    }
 }

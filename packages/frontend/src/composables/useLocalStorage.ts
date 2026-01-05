@@ -29,7 +29,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): Ref<T> {
 
     watch(
         value,
-        (newValue) => {
+        newValue => {
             if (newValue === undefined || newValue === null) {
                 localStorage.removeItem(key);
             } else {

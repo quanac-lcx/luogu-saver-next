@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import { inject, ref } from 'vue';
-import { NButton, NColorPicker, NDrawer, NDrawerContent, NForm, NFormItem, NIcon, NInput, useMessage } from 'naive-ui';
+import {
+    NButton,
+    NColorPicker,
+    NDrawer,
+    NDrawerContent,
+    NForm,
+    NFormItem,
+    NIcon,
+    NInput,
+    useMessage
+} from 'naive-ui';
 import { Settings } from '@vicons/ionicons5';
 import { uiThemeKey } from '@/styles/theme/themeKeys.ts';
 import { defaultTheme } from '@/styles/theme/default-theme.ts';
@@ -25,8 +35,8 @@ const handleReset = () => {
         type="primary"
         circle
         size="large"
-        @click="showDrawer = true"
         style="position: fixed; right: 20px; bottom: 20px; z-index: 1000"
+        @click="showDrawer = true"
     >
         <template #icon>
             <n-icon>
@@ -62,7 +72,7 @@ const handleReset = () => {
             </n-form>
 
             <template #footer>
-                <n-button @click="handleReset" type="warning" ghost> 重置为默认 </n-button>
+                <n-button type="warning" ghost @click="handleReset"> 重置为默认 </n-button>
             </template>
         </n-drawer-content>
     </n-drawer>

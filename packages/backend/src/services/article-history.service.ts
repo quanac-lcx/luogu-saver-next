@@ -12,8 +12,12 @@ export class ArticleHistoryService {
      * @param title - The title of the article
      * @param content - The content of the article
      */
-    @CacheEvict((articleId: string, title: string, content: string) => `article_history:${articleId}`)
-    public static async pushNewVersion(articleId: string, title: string, content: string): Promise<void> {
+    @CacheEvict((articleId: string) => `article_history:${articleId}`)
+    public static async pushNewVersion(
+        articleId: string,
+        title: string,
+        content: string
+    ): Promise<void> {
         const latestHistory = await ArticleHistory.findOne({
             where: { articleId },
             order: { version: 'DESC' }

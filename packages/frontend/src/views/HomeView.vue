@@ -39,7 +39,11 @@ const handleSave = () => {
                 <n-gi span="1 m:2 l:2">
                     <Card title="公告" style="height: 100%" :hoverable="true">
                         <template #header-extra>
-                            <n-icon size="20" :component="Megaphone" :color="themeVars.primaryColor" />
+                            <n-icon
+                                size="20"
+                                :component="Megaphone"
+                                :color="themeVars.primaryColor"
+                            />
                         </template>
                         <div class="announcement-content">This is a sample announcement text.</div>
                     </Card>
@@ -51,9 +55,15 @@ const handleSave = () => {
                             <div class="stat-item">
                                 <div
                                     class="stat-icon-wrapper"
-                                    :style="{ backgroundColor: themeVars.primaryColor + '20' }"
+                                    :style="{
+                                        backgroundColor: themeVars.primaryColor + '20'
+                                    }"
                                 >
-                                    <n-icon size="24" :component="Newspaper" :color="themeVars.primaryColor" />
+                                    <n-icon
+                                        size="24"
+                                        :component="Newspaper"
+                                        :color="themeVars.primaryColor"
+                                    />
                                 </div>
                                 <n-statistic label="文章总数" :value="articleCount" />
                             </div>
@@ -61,9 +71,15 @@ const handleSave = () => {
                             <div class="stat-item">
                                 <div
                                     class="stat-icon-wrapper"
-                                    :style="{ backgroundColor: themeVars.primaryColor + '20' }"
+                                    :style="{
+                                        backgroundColor: themeVars.primaryColor + '20'
+                                    }"
                                 >
-                                    <n-icon size="24" :component="Clipboard" :color="themeVars.primaryColor" />
+                                    <n-icon
+                                        size="24"
+                                        :component="Clipboard"
+                                        :color="themeVars.primaryColor"
+                                    />
                                 </div>
                                 <n-statistic label="剪贴板总数" :value="pasteCount" />
                             </div>

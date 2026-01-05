@@ -24,7 +24,7 @@ router.get('/query/:id', async (ctx: Context) => {
         } else {
             ctx.success(article);
         }
-    } catch (error) {
+    } catch {
         ctx.fail(500, 'Failed to retrieve article');
     }
 });
@@ -32,7 +32,7 @@ router.get('/query/:id', async (ctx: Context) => {
 router.get('/relevant/:id', async (ctx: Context) => {
     try {
         ctx.success(await RecommendationService.getRelevantArticle(ctx.params.id));
-    } catch (error) {
+    } catch {
         ctx.fail(500, 'Failed to retrieve relevant articles');
     }
 });
@@ -41,7 +41,7 @@ router.get('/history/:id', async (ctx: Context) => {
     try {
         const history = await ArticleHistoryService.getHistoryByArticleId(ctx.params.id);
         ctx.success(history);
-    } catch (error) {
+    } catch {
         ctx.fail(500, 'Failed to retrieve article history');
     }
 });
@@ -64,7 +64,7 @@ router.get('/recent', async (ctx: Context) => {
             content: article.content ? truncateUtf8(article.content, truncatedCount) : undefined
         }));
         ctx.success(sanitizedArticles);
-    } catch (error) {
+    } catch {
         ctx.fail(500, 'Failed to retrieve recent articles');
     }
 });
@@ -73,7 +73,7 @@ router.get('/count', async (ctx: Context) => {
     try {
         const count = await ArticleService.getArticleCount();
         ctx.success({ count });
-    } catch (error) {
+    } catch {
         ctx.fail(500, 'Failed to retrieve article count');
     }
 });

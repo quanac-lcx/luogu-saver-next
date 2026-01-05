@@ -59,7 +59,13 @@ const effectiveIconColor = computed(() => {
         <div :style="containerStyle">
             <n-h1 class="title">
                 <span :style="titleStyle">
-                    <n-icon v-if="icon" :component="icon" :color="effectiveIconColor" size="36" :depth="1" />
+                    <n-icon
+                        v-if="icon"
+                        :component="icon"
+                        :color="effectiveIconColor"
+                        size="36"
+                        :depth="1"
+                    />
                     {{ title }}
                 </span>
             </n-h1>

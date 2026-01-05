@@ -30,7 +30,11 @@ export class ArticleService {
      * @param updatedAfter Optional date to filter articles updated after this date
      * @return List of recent articles
      */
-    @Cacheable(600, (count, after) => `article:recent:${count}:${after ? after.getTime() : 'all'}`, Article)
+    @Cacheable(
+        600,
+        (count, after) => `article:recent:${count}:${after ? after.getTime() : 'all'}`,
+        Article
+    )
     static async getRecentArticles(count: number = 20, updatedAfter?: Date): Promise<Article[]> {
         return await Article.find({
             where: {
