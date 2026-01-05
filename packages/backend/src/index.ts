@@ -13,10 +13,11 @@ import { responseHelper } from './middlewares/response';
 import * as worker from '@/workers';
 import { initSocket } from './lib/socket';
 import http from 'http';
+import { socketJoinHandler } from '@/socket';
 
 const app = new Koa();
 const server = http.createServer(app.callback());
-initSocket(server);
+initSocket(server, socketJoinHandler);
 
 app.use(bodyParser());
 app.use(authorization);

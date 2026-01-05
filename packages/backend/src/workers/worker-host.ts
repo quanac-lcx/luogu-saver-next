@@ -12,6 +12,7 @@ import { PointGuard } from '@/lib/point-guard';
 import { config } from '@/config';
 import { logger } from '@/lib/logger';
 import { TaskService } from '@/services/task.service';
+import { emitToRoom } from '@/lib/socket';
 
 export class WorkerHost<T extends CommonTask> {
     public worker: Worker<T>;
@@ -59,6 +60,7 @@ export class WorkerHost<T extends CommonTask> {
 
         this.worker.on('completed', async job => {
             logger.info({ jobId: job.id }, 'Job completed successfully.');
+            emitToRoom(`task:${job.id}`, `task:${job.id}:completed`, { status: 'completed' });
             await TaskService.updateTask(
                 job.id!,
                 TaskStatus.COMPLETED,
@@ -70,6 +72,10 @@ export class WorkerHost<T extends CommonTask> {
             const isFinalAttempt = job && job.attemptsMade >= (job.opts.attempts || 1);
             const isUnrecoverable = err instanceof UnrecoverableError;
             if (isFinalAttempt || isUnrecoverable) {
+                emitToRoom(`task:${job?.id}`, `task:${job?.id}:failed`, {
+                    status: 'failed',
+                    error: err.message
+                });
                 logger.error({ jobId: job?.id, err }, 'Job failed PERMANENTLY.');
                 if (job?.id) await TaskService.updateTask(job.id, TaskStatus.FAILED, err.message);
             } else {

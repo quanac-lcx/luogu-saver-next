@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
     useMessage,
@@ -15,7 +15,8 @@ import {
     NAnchorLink,
     NTimeline,
     NTimelineItem,
-    NSpin
+    NSpin,
+    useDialog
 } from 'naive-ui';
 import {
     ShareSocialOutline,
@@ -53,7 +54,15 @@ import { useLocalStorage } from '@/composables/useLocalStorage.ts';
 const route = useRoute();
 const router = useRouter();
 const message = useMessage();
-const { isSaving, hasUpdate, handle404, setupUpdateListener, handleRefresh } = useContentSaver();
+const dialog = useDialog();
+const {
+    isSaving,
+    hasUpdate,
+    handle404,
+    setupUpdateListener,
+    setupTaskUpdateListener,
+    handleRefresh
+} = useContentSaver();
 
 const articleId = route.params.id as string;
 const article = ref<Article | null>(null);
@@ -81,6 +90,7 @@ if (Date.now() - lastUpdate.value > 60 * 60 * 1000) {
     // Request update automatically if last update was more than 1 hour ago
     console.log('Auto update triggered for article', articleId);
     saveArticle(articleId);
+    // We not set the lastTaskId here because we don't care whether the update succeeds or not
     lastUpdate.value = Date.now();
 }
 
@@ -117,12 +127,34 @@ const loadHistory = async () => {
     }
 };
 
+let lastTaskId = ref('');
+watch(lastTaskId, newTaskId => {
+    setupTaskUpdateListener(
+        newTaskId,
+        () => {},
+        error => {
+            dialog.error({
+                title: '保存失败',
+                content: error || '文章保存过程中出现错误，请重试。',
+                positiveText: '重试',
+                negativeText: '取消',
+                onPositiveClick: async () => {
+                    lastTaskId.value = (await saveArticle(articleId)).data.taskId;
+                },
+                maskClosable: false,
+                closable: false,
+                closeOnEsc: false
+            });
+        }
+    );
+});
+
 const loadData = async () => {
     loading.value = true;
     try {
         const res = await getArticleById(articleId);
         if (res.code === 404) {
-            handle404(() => saveArticle(articleId));
+            handle404(async () => (lastTaskId.value = (await saveArticle(articleId)).data.taskId));
             return;
         }
         article.value = res.data;
@@ -141,7 +173,7 @@ const loadData = async () => {
     }
 };
 
-setupUpdateListener(`article_${articleId}`, 'article:updated', loadData);
+setupUpdateListener(`article_${articleId}`, `article:${articleId}:updated`, loadData);
 
 const openArticle = (id: string) => {
     const route = router.resolve({ path: `/article/${id}` });
@@ -163,7 +195,7 @@ const handleCopy = async () => {
 const handleUpdate = async () => {
     if (!articleId) return;
     try {
-        await saveArticle(articleId);
+        lastTaskId.value = (await saveArticle(articleId)).data.taskId;
         message.success('更新请求已提交');
     } catch (err: any) {
         message.error(err.message || '更新请求失败');

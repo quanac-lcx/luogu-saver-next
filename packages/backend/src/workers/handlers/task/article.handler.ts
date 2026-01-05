@@ -64,6 +64,6 @@ export class ArticleHandler implements TaskHandler<SaveTask> {
         }
         await ArticleService.saveArticle(article);
         await ArticleHistoryService.pushNewVersion(article.id, article.title, article.content);
-        emitToRoom(`article_${article.id}`, 'article:updated');
+        emitToRoom(`article_${article.id}`, `article:${article.id}:updated`);
     }
 }

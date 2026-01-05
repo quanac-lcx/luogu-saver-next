@@ -67,6 +67,34 @@ export function useContentSaver() {
         });
     };
 
+    const setupTaskUpdateListener = (
+        taskId: string,
+        onComplete: () => void,
+        onFail: (error: string) => void
+    ) => {
+        const roomId = `task:${taskId}`;
+        const completeEvent = `task:${taskId}:completed`;
+        const failEvent = `task:${taskId}:failed`;
+        socket.joinRoom(roomId);
+
+        const handleComplete = () => {
+            onComplete();
+        };
+
+        const handleFail = (data: { error: string }) => {
+            onFail(data.error);
+        };
+
+        socket.getInstance().on(completeEvent, handleComplete);
+        socket.getInstance().on(failEvent, handleFail);
+
+        onUnmounted(() => {
+            socket.getInstance().off(completeEvent, handleComplete);
+            socket.getInstance().off(failEvent, handleFail);
+            socket.leaveRoom(roomId);
+        });
+    };
+
     const handleRefresh = (onRefresh: () => void) => {
         hasUpdate.value = false;
         onRefresh();
@@ -78,6 +106,7 @@ export function useContentSaver() {
         handle404,
         stopSaving,
         setupUpdateListener,
+        setupTaskUpdateListener,
         handleRefresh
     };
 }

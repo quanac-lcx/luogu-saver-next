@@ -4,7 +4,10 @@ import { logger } from './logger';
 
 let io: Server | null = null;
 
-export function initSocket(server: http.Server) {
+export function initSocket(
+    server: http.Server,
+    joinRoomCallback?: (socket: Socket, room: string) => Promise<void>
+): Server {
     io = new Server(server, {
         path: '/websocket',
         cors: {
@@ -13,12 +16,19 @@ export function initSocket(server: http.Server) {
         }
     });
 
-    io.on('connection', (socket: Socket) => {
+    io.on('connection', async (socket: Socket) => {
         logger.info({ id: socket.id }, 'Client connected');
 
-        socket.on('join', (room: string) => {
+        socket.on('join', async (room: string) => {
             socket.join(room);
             logger.info({ id: socket.id, room }, 'Client joined room');
+            if (joinRoomCallback) {
+                try {
+                    await joinRoomCallback(socket, room);
+                } catch {
+                    logger.info({ id: socket.id, room }, 'Error in joinRoomCallback');
+                }
+            }
         });
 
         socket.on('leave', (room: string) => {
