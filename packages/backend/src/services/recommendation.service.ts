@@ -66,10 +66,7 @@ export class RecommendationService {
             const now = Date.now();
             await redisClient.zadd(key, now, articleId);
             await redisClient.zremrangebyrank(key, 0, -config.recommendation.anonymous.maxCount - 1);
-            await redisClient.expire(
-                key,
-                7 * 24 * 60 * 60 // 7 days
-            );
+            await redisClient.expire(key, config.recommendation.anonymous.expireTime);
         } catch (error) {
             logger.error({ error, deviceId, articleId }, `Failed to record anonymous behavior`);
         }
