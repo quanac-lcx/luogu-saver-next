@@ -7,11 +7,11 @@ const show = ref(false);
 
 import { CONSENT_TRACKING_STORAGE_KEY } from '@/utils/constants.ts';
 import { useLocalStorage } from '@/composables/useLocalStorage.ts';
-const trackingStorage = useLocalStorage(CONSENT_TRACKING_STORAGE_KEY, false);
+const trackingStorage = useLocalStorage(CONSENT_TRACKING_STORAGE_KEY, 'unset');
 
 onMounted(() => {
     const consent = trackingStorage.value;
-    if (consent === null) {
+    if (consent === 'unset') {
         setTimeout(() => {
             show.value = true;
         }, 500);
@@ -19,12 +19,12 @@ onMounted(() => {
 });
 
 const handleAccept = () => {
-    trackingStorage.value = true;
+    trackingStorage.value = 'allowed';
     show.value = false;
 };
 
 const handleReject = () => {
-    trackingStorage.value = false;
+    trackingStorage.value = 'denied';
     show.value = false;
 };
 </script>
