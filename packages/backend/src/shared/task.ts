@@ -3,6 +3,7 @@ export interface CommonTask {
     type: TaskType;
     payload: {
         target: string;
+        metadata: Record<string, any>;
         [key: string]: any;
     };
 }
