@@ -13,15 +13,20 @@ export interface SaveTask extends CommonTask {
     payload: {
         target: SaveTarget;
         targetId: string;
-        metadata: Record<string, any>;
+        metadata: Record<string, never>;
     };
+}
+
+export interface AiMetadata {
+    model: string;
+    // TODO: add more fields as needed
 }
 
 export interface AiTask extends CommonTask {
     type: TaskType.AI_PROCESS;
     payload: {
         target: string;
-        metadata: Record<string, any>;
+        metadata: AiMetadata;
     };
 }
 

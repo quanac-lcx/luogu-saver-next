@@ -4,13 +4,12 @@ import { getQueueByType } from '@/lib/queue-factory';
 import { getRandomString } from '@/utils/string';
 
 export class TaskService {
-    static async createTask(type: TaskType, payload: any, target?: string): Promise<Task> {
+    static async createTask(type: TaskType, payload: any): Promise<Task> {
         const task = new Task();
 
         task.id = getRandomString(8);
         task.type = type;
         task.payload = payload;
-        task.target = target || payload.target || '';
         task.status = TaskStatus.PENDING;
         await task.save();
         return task;
@@ -19,9 +18,6 @@ export class TaskService {
     static async dispatchTask(taskId: string) {
         const task = await Task.findOne({ where: { id: taskId } });
         if (!task) throw new Error(`Task with ID ${taskId} not found.`);
-        if (task.target) {
-            task.payload.target = task.target;
-        }
         if (task.type === TaskType.SAVE) {
             const queueSave = getQueueByType(TaskType.SAVE);
 

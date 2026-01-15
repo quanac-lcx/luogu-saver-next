@@ -18,9 +18,6 @@ export class Task extends BaseEntity {
     @Column({ type: 'varchar' })
     type: TaskType;
 
-    @Column({ type: 'varchar', nullable: true })
-    target: string;
-
     @Column({ type: 'json' })
     payload: any;
 }

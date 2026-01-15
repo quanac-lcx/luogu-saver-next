@@ -5,8 +5,8 @@ import { SaveTask, TaskType } from '@/shared/task';
 import { QUEUE_NAMES } from '@/shared/constants';
 import { logger } from '@/lib/logger';
 
-import { ArticleHandler } from '@/workers/handlers/task/article.handler';
-import { PasteHandler } from '@/workers/handlers/task/paste.handler';
+import { ArticleHandler } from '@/workers/handlers/task/save/article.handler';
+import { PasteHandler } from '@/workers/handlers/task/save/paste.handler';
 import { config } from '@/config';
 import { WorkerOptions } from 'bullmq';
 

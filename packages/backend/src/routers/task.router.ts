@@ -25,7 +25,7 @@ router.post('/create', async (ctx: Context) => {
         return;
     }
     try {
-        const task = await TaskService.createTask(type, payload, target);
+        const task = await TaskService.createTask(type, payload);
         await TaskService.dispatchTask(task.id);
         ctx.success({ taskId: task.id });
     } catch (error) {
