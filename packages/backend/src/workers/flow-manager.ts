@@ -51,12 +51,7 @@ export class FlowManager {
 
         Object.values(QUEUE_NAMES).forEach(queueName => {
             const events = new QueueEvents(queueName, {
-                connection: {
-                    host: config.redis.host,
-                    port: config.redis.port,
-                    password: config.redis.password,
-                    keyPrefix: config.redis.keyPrefix
-                }
+                connection: config.redis
             });
 
             events.on('completed', async ({ jobId, returnvalue }) => {
