@@ -17,6 +17,7 @@ import { UpdateArticleEmbeddingHandler } from '@/workers/handlers/task/update/up
 import { UpdateCensorResultHandler } from '@/workers/handlers/task/update/update-censor-result';
 import { config } from '@/config';
 import { WorkerOptions } from 'bullmq';
+import { FlowManager } from './flow-manager';
 
 export function bootstrap() {
     const saveTaskPointGuard = new PointGuard(
@@ -89,4 +90,7 @@ export function bootstrap() {
     });
 
     logger.info('Worker hosts initialized and running.');
+
+    FlowManager.setupQueueEvents();
+    logger.info('FlowManager queue events set up.');
 }
