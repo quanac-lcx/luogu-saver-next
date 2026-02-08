@@ -24,7 +24,12 @@ export class WorkerHost<T extends CommonTask> {
         options?: WorkerOptions
     ) {
         this.worker = new Worker<T>(queueName, this.handleJob, {
-            connection: config.redis,
+            connection: {
+                host: config.redis.host,
+                port: config.redis.port,
+                password: config.redis.password
+            },
+            prefix: config.redis.keyPrefix,
             concurrency: 5,
             limiter: {
                 max: 100,
@@ -49,7 +54,12 @@ export class WorkerHost<T extends CommonTask> {
 
     private setupEvents() {
         const queueEvents = new QueueEvents(this.worker.name, {
-            connection: config.redis
+            connection: {
+                host: config.redis.host,
+                port: config.redis.port,
+                password: config.redis.password
+            },
+            prefix: config.redis.keyPrefix
         });
 
         this.worker.on('completed', async job => {

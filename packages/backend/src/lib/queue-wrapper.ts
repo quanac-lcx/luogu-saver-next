@@ -7,7 +7,12 @@ export class TypedQueue<T> {
 
     constructor(queueName: string) {
         this.queue = new Queue(queueName, {
-            connection: config.redis,
+            connection: {
+                host: config.redis.host,
+                port: config.redis.port,
+                password: config.redis.password
+            },
+            prefix: config.redis.keyPrefix,
             defaultJobOptions: {
                 removeOnComplete: 100,
                 removeOnFail: 500,
